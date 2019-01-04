@@ -8,7 +8,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Login'),
+        title: Text('Iniciar sesión'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -76,11 +76,11 @@ class InputFormState extends State<InputForm> {
       textInputAction: TextInputAction.next,
       focusNode: _usernameFocus,
       decoration: InputDecoration(
-        labelText: 'username',
+        labelText: 'Usuario',
       ),
       validator: (value) {
         if (value.isEmpty) {
-          return 'Please enter some text';
+          return 'No puede ser vacío';
         }
       },
       onFieldSubmitted: (term) {
@@ -95,12 +95,12 @@ class InputFormState extends State<InputForm> {
 
   TextFormField _passwordField() {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'password'),
+      decoration: InputDecoration(labelText: 'Contraseña'),
       obscureText: true,
       focusNode: _passwordFocus,
       validator: (value) {
         if (value.isEmpty) {
-          return 'Please enter some text';
+          return 'No puedee ser vacío';
         }
       },
       onFieldSubmitted: (term) {
@@ -127,7 +127,7 @@ class InputFormState extends State<InputForm> {
                     Text('${loginInfo.username} / ${loginInfo.password}')));
           }
         },
-        child: Text('Login'),
+        child: Text('Iniciar sesión'),
       ),
     );
   }
