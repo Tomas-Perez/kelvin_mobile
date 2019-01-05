@@ -6,6 +6,7 @@ import 'package:kelvin_mobile/login-screen.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/vehicle-screen.dart';
+import 'package:kelvin_mobile/vehicles-screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kelvin',
-      home: DeviceScreen(device: devices[0]),
+      home: VehiclesScreen(
+        vehicles: vehicles,
+      ),
     );
   }
 }

@@ -24,4 +24,9 @@ class Vehicle {
 
   Vehicle({this.id, this.ownerId, this.domain, this.wheels, this.model,
       this.brand, this.deviceId});
+
+  @override
+  String toString() {
+    return 'Vehicle{domain: $domain}';
+  }
 }
