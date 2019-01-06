@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
 
-typedef SectionBuilder<H> = Widget Function(
-  BuildContext context,
-  H data,
-  int index,
-);
-
-typedef BodyBuilder<D> = List<Widget> Function(
-  BuildContext context,
-  List<D> data,
-);
-
 class SectionList<H, D> extends StatelessWidget {
   final Map<H, List<D>> sections;
-  final SectionBuilder<H> headerBuilder;
-  final BodyBuilder<D> bodyBuilder;
+  final Widget Function(BuildContext, H, int) headerBuilder;
+  final List<Widget> Function(BuildContext context, List<D> data) bodyBuilder;
 
   @override
   Widget build(BuildContext context) {
