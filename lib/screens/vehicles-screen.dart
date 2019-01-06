@@ -1,8 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
-import 'package:collection/collection.dart';
-import 'package:kelvin_mobile/widgets/section-list.dart';
 import 'package:kelvin_mobile/screens/vehicle-screen.dart';
+import 'package:kelvin_mobile/widgets/text-section-list.dart';
 import 'package:material_search/material_search.dart';
 
 class VehiclesScreen extends StatelessWidget {
@@ -27,11 +27,15 @@ class VehiclesScreen extends StatelessWidget {
           )
         ],
       ),
-      body: _makeList(context),
+      body: TextSectionList<Vehicle>(
+        sections: sectionedVehicles,
+        valueToString: (v) => v.domain,
+        onTap: (v) => _pushVehicleScreen(context, v),
+      ),
     );
   }
 
-  void _pushVehicleScreen(Vehicle vehicle, BuildContext context) {
+  void _pushVehicleScreen(BuildContext context, Vehicle vehicle) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -43,40 +47,9 @@ class VehiclesScreen extends StatelessWidget {
     );
   }
 
-  _makeList(BuildContext context) {
-    return SectionList(
-      sections: sectionedVehicles,
-      headerBuilder: (context, name, i) => _sectionHeader(name, context),
-      bodyBuilder: (context, data) => _sectionBody(data, context),
-    );
-  }
-
-  List<Widget> _sectionBody(List<Vehicle> vehicles, BuildContext context) {
-    return ListTile.divideTiles(
-      context: context,
-      tiles: vehicles.map(
-            (v) => ListTile(
-          title: Text(v.domain),
-          onTap: () => _pushVehicleScreen(v, context),
-        ),
-      ),
-    ).toList();
-  }
-
-  Widget _sectionHeader(String name, BuildContext context) {
-    return Container(
-      child: Text(
-        name,
-        style: Theme.of(context).textTheme.subhead,
-      ),
-      color: Theme.of(context).dividerColor,
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-    );
-  }
-
-  _pushMaterialSearch(BuildContext context) {
+  void _pushMaterialSearch(BuildContext context) {
     Navigator.of(context).push(_searchPage()).then((v) {
-      if (v != null) _pushVehicleScreen(v, context);
+      if (v != null) _pushVehicleScreen(context, v);
     });
   }
 
