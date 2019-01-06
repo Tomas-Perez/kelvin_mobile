@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/mock/vehicles.dart';
-import 'package:kelvin_mobile/screens/vehicles-screen.dart';
+import 'package:kelvin_mobile/mock/devices.dart';
+import 'package:kelvin_mobile/screens/devices-screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,8 +10,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kelvin',
-      home: VehiclesScreen(
-        vehicles: vehicles,
+      home: DevicesScreen(
+        devices: devices,
       ),
     );
   }

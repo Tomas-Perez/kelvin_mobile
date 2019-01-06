@@ -25,12 +25,14 @@ class VehiclesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SearchScaffold(
-      bodyBuilder: (context, search) => TextSectionList<Vehicle>(
-            sections: _groupByInitials(
-                vehicles.where((v) => _filter(v.domain, search)).toList()),
-            valueToString: (v) => v.domain,
-            onTap: (v) => _pushVehicleScreen(context, v),
-          ),
+      bodyBuilder: (context, search) {
+        return TextSectionList<Vehicle>(
+          sections: _groupByInitials(
+              vehicles.where((v) => _filter(v.domain, search)).toList()),
+          valueToString: (v) => v.domain,
+          onTap: (v) => _pushVehicleScreen(context, v),
+        );
+      },
       title: 'Vehículos',
       searchHint: 'Buscar vehículo',
     );
