@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:collection/collection.dart';
-import 'package:kelvin_mobile/vehicle-screen.dart';
+import 'package:kelvin_mobile/widgets/section-list.dart';
+import 'package:kelvin_mobile/screens/vehicle-screen.dart';
 import 'package:material_search/material_search.dart';
 
 class VehiclesScreen extends StatelessWidget {
@@ -43,31 +44,23 @@ class VehiclesScreen extends StatelessWidget {
   }
 
   _makeList(BuildContext context) {
-    return ListView(
-      children: sectionedVehicles.entries.map((entry) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _sectionHeader(entry.key, context),
-            _sectionBody(sectionedVehicles[entry.key], context)
-          ],
-        );
-      }).toList(),
+    return SectionList(
+      sections: sectionedVehicles,
+      headerBuilder: (context, name, i) => _sectionHeader(name, context),
+      bodyBuilder: (context, data) => _sectionBody(data, context),
     );
   }
 
-  Widget _sectionBody(List<Vehicle> vehicles, BuildContext context) {
-    return Column(
-      children: ListTile.divideTiles(
-        context: context,
-        tiles: vehicles.map(
-          (v) => ListTile(
-                title: Text(v.domain),
-                onTap: () => _pushVehicleScreen(v, context),
-              ),
+  List<Widget> _sectionBody(List<Vehicle> vehicles, BuildContext context) {
+    return ListTile.divideTiles(
+      context: context,
+      tiles: vehicles.map(
+            (v) => ListTile(
+          title: Text(v.domain),
+          onTap: () => _pushVehicleScreen(v, context),
         ),
-      ).toList(),
-    );
+      ),
+    ).toList();
   }
 
   Widget _sectionHeader(String name, BuildContext context) {

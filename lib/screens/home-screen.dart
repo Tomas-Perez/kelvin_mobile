@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/scan-screen.dart';
+import 'package:kelvin_mobile/screens/scan-screen.dart';
 import 'package:flutter/rendering.dart';
 
 class HomeScreen extends StatelessWidget {
