@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
+import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/devices-screen.dart';
 import 'package:kelvin_mobile/screens/vehicles-screen.dart';
 
@@ -33,7 +34,7 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon(Icons.pages),
+        child: Icon(CustomIcons.qrcode),
       ),
     );
   }
