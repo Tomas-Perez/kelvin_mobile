@@ -97,10 +97,10 @@ class _SearchScaffoldState extends State<SearchScaffold> {
     return AppBar(
       title: Text(widget.title),
       actions: <Widget>[
-        new IconButton(
+        IconButton(
           onPressed: _handleSearch,
           tooltip: 'Search',
-          icon: new Icon(Icons.search),
+          icon: Icon(Icons.search),
         )
       ],
     );
@@ -111,15 +111,15 @@ class _SearchScaffoldState extends State<SearchScaffold> {
       title: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: new InputDecoration.collapsed(hintText: widget.searchHint),
+        decoration: InputDecoration.collapsed(hintText: widget.searchHint),
         style: Theme.of(context).textTheme.title,
       ),
       backgroundColor: Theme.of(context).secondaryHeaderColor,
       actions: <Widget>[
-        new IconButton(
+        IconButton(
           onPressed: _handleCancel,
           tooltip: 'Cancel',
-          icon: new Icon(Icons.clear),
+          icon: Icon(Icons.clear),
         )
       ],
     );

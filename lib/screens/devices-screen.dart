@@ -39,14 +39,9 @@ class DevicesScreen extends StatelessWidget {
   }
 
   void _pushDeviceScreen(BuildContext context, Device device) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return DeviceScreen(
-            device: device,
-          );
-        },
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DeviceScreen(device: device)),
     );
   }
 }
