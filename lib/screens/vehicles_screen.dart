@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
-import 'package:kelvin_mobile/screens/vehicle-screen.dart';
-import 'package:kelvin_mobile/widgets/search-scaffold.dart';
-import 'package:kelvin_mobile/widgets/text-section-list.dart';
+import 'package:kelvin_mobile/screens/vehicle_screen.dart';
+import 'package:kelvin_mobile/widgets/search_scaffold.dart';
+import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class VehiclesScreen extends StatelessWidget {
   final List<Vehicle> vehicles;
@@ -42,9 +42,7 @@ class VehiclesScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VehicleScreen(
-              vehicle: vehicle,
-            ),
+        builder: (context) => VehicleScreen(vehicle: vehicle),
       ),
     );
   }

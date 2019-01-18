@@ -1,16 +1,15 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
-import 'package:kelvin_mobile/screens/device-screen.dart';
-import 'package:kelvin_mobile/screens/devices-screen.dart';
-import 'package:kelvin_mobile/screens/vehicle-screen.dart';
-import 'package:kelvin_mobile/screens/vehicles-screen.dart';
-import 'package:kelvin_mobile/widgets/device-service-provider.dart';
-import 'package:kelvin_mobile/widgets/vehicle-service-provider.dart';
+import 'package:kelvin_mobile/screens/device_screen.dart';
+import 'package:kelvin_mobile/screens/devices_screen.dart';
+import 'package:kelvin_mobile/screens/vehicle_screen.dart';
+import 'package:kelvin_mobile/screens/vehicles_screen.dart';
+import 'package:kelvin_mobile/widgets/device_service_provider.dart';
+import 'package:kelvin_mobile/widgets/scanner_service_provider.dart';
+import 'package:kelvin_mobile/widgets/vehicle_service_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -38,16 +37,20 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => scan(context),
-        child: Icon(CustomIcons.qrcode),
+      floatingActionButton: Builder(
+        builder: (c) {
+          return FloatingActionButton(
+            onPressed: () => _scan(context),
+            child: Icon(CustomIcons.qrcode),
+          );
+        },
       ),
     );
   }
 
-  Future scan(BuildContext context) async {
+  Future _scan(BuildContext context) async {
     try {
-      String barcode = await BarcodeScanner.scan();
+      String barcode = await ScannerServiceProvider.of(context).scan();
       final params = barcode.split('/');
       final type = params[0];
       final id = params[1];
@@ -56,9 +59,7 @@ class HomeScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (c) => VehicleScreen(
-                  vehicle: vehicle,
-                ),
+            builder: (c) => VehicleScreen(vehicle: vehicle),
           ),
         );
       } else if (type == 'device') {
@@ -66,22 +67,12 @@ class HomeScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (c) => DeviceScreen(
-                  device: device,
-                ),
+            builder: (c) => DeviceScreen(device: device),
           ),
         );
       }
-    } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
-        print('The user did not grant camera permissions');
-      } else {
-        print('Unknown error: $e');
-      }
-    } on FormatException {
-      print('User returned using the "back"-button)');
     } catch (e) {
-      print('Unknown error: $e');
+      print('Error: $e');
     }
   }
 
@@ -137,9 +128,7 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => VehiclesScreen(
-              vehicles: vehicles,
-            ),
+        builder: (c) => VehiclesScreen(vehicles: vehicles),
       ),
     );
   }
@@ -148,9 +137,7 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => DevicesScreen(
-              devices: devices,
-            ),
+        builder: (c) => DevicesScreen(devices: devices),
       ),
     );
   }

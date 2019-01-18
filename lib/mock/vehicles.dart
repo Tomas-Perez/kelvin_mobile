@@ -17,7 +17,7 @@ final vehicles = [
     wheels: 2,
     model: '110',
     brand: 'Zanella',
-    deviceId: '23123043',
+    deviceId: '94568750',
   ),
   Vehicle(
     id: '232096570',
@@ -26,7 +26,7 @@ final vehicles = [
     wheels: 10,
     model: 'Something',
     brand: 'Scania',
-    deviceId: '20391650',
+    deviceId: '12049205034',
   ),
   Vehicle(
     id: '2394023043',
@@ -35,7 +35,7 @@ final vehicles = [
     wheels: 12,
     model: 'Else',
     brand: 'Mercedes-Benz',
-    deviceId: '123904023',
+    deviceId: '546003284',
   ),
   Vehicle(
     id: '12039059340',
@@ -44,6 +44,6 @@ final vehicles = [
     wheels: 8,
     model: 'Giff',
     brand: 'Volvo',
-    deviceId: '213990540',
+    deviceId: '12049205034',
   ),
 ];

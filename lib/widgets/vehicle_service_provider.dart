@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/services/vehicle-service.dart';
+import 'package:kelvin_mobile/services/vehicle_service.dart';
 
 class VehicleServiceProvider extends InheritedWidget {
   final Widget child;

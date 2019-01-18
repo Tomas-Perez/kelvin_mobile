@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 

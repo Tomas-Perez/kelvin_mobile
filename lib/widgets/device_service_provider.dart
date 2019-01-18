@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/services/device-service.dart';
+import 'package:kelvin_mobile/services/device_service.dart';
 
 class DeviceServiceProvider extends InheritedWidget {
   final Widget child;

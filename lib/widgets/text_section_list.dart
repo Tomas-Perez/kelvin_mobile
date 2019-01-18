@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/widgets/section-list.dart';
+import 'package:kelvin_mobile/widgets/section_list.dart';
 
 
 class TextSectionList<V> extends StatelessWidget {
