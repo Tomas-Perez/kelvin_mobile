@@ -41,7 +41,11 @@ class VehiclesScreen extends StatelessWidget {
   void _pushVehicleScreen(BuildContext context, Vehicle vehicle) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VehicleScreen(vehicle: vehicle)),
+      MaterialPageRoute(
+        builder: (context) => VehicleScreen(
+              vehicle: vehicle,
+            ),
+      ),
     );
   }
 }
