@@ -1,10 +1,8 @@
-
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 
 abstract class ScannerService {
   Future<String> scan();
-
 }
 
 class ScannerException implements Exception {
@@ -15,14 +13,15 @@ class ScannerException implements Exception {
 
 class AccessDeniedException implements ScannerException {
   final String message = 'The user did not grant camera permissions';
+
   const AccessDeniedException();
 }
 
 class BackButtonException implements ScannerException {
   final String message = 'User returned using the back button';
+
   const BackButtonException();
 }
-
 
 class QRScannerService implements ScannerService {
   @override
@@ -41,11 +40,9 @@ class QRScannerService implements ScannerService {
       throw ScannerException(e.toString());
     }
   }
-
 }
 
 class MockScannerService implements ScannerService {
-
   final String Function() onScan;
 
   @override
@@ -53,6 +50,3 @@ class MockScannerService implements ScannerService {
 
   MockScannerService({this.onScan});
 }
-
-
-

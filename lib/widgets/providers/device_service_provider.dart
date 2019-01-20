@@ -13,6 +13,6 @@ class DeviceServiceProvider extends InheritedWidget {
               as DeviceServiceProvider)
           .deviceService;
 
-  DeviceServiceProvider({Key key, this.child, this.deviceService})
+  const DeviceServiceProvider({Key key, this.child, this.deviceService})
       : super(key: key);
 }

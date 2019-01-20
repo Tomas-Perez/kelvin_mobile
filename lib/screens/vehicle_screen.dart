@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
+import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
-import 'package:kelvin_mobile/widgets/device_service_provider.dart';
-import 'package:kelvin_mobile/widgets/scanner_service_provider.dart';
+import 'package:kelvin_mobile/services/link_parser.dart';
+import 'package:kelvin_mobile/widgets/providers/device_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
 
 class VehicleScreen extends StatelessWidget {
   final Vehicle vehicle;
@@ -56,17 +59,18 @@ class VehicleScreen extends StatelessWidget {
   Future _scan(BuildContext context) async {
     try {
       String barcode = await ScannerServiceProvider.of(context).scan();
-      final params = barcode.split('/');
-      final type = params[0];
-      final id = params[1];
-      if (type == 'device') {
-        _pushDeviceScreen(id, context);
+      final info = LinkParserProvider.of(context).parse(barcode);
+      if (info.type == LinkType.DEVICE) {
+        _pushDeviceScreen(info.id, context);
       } else {
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('Código inválido')));
+        Errors.show(context, message: Errors.NOT_A_DEVICE);
       }
+    } on UnknownTypeException catch (e) {
+      Errors.show(context, exc: e, message: Errors.NOT_A_DEVICE);
+    } on FormatException catch (e) {
+      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
     } catch (e) {
-      print('Error: $e');
+      Errors.show(context, exc: e);
     }
   }
 

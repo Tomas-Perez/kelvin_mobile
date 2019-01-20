@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
@@ -7,9 +8,11 @@ import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/devices_screen.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/screens/vehicles_screen.dart';
-import 'package:kelvin_mobile/widgets/device_service_provider.dart';
-import 'package:kelvin_mobile/widgets/scanner_service_provider.dart';
-import 'package:kelvin_mobile/widgets/vehicle_service_provider.dart';
+import 'package:kelvin_mobile/services/link_parser.dart';
+import 'package:kelvin_mobile/widgets/providers/device_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/vehicle_service_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -40,7 +43,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: Builder(
         builder: (c) {
           return FloatingActionButton(
-            onPressed: () => _scan(context),
+            onPressed: () => _scan(c),
             child: Icon(CustomIcons.qrcode),
           );
         },
@@ -50,27 +53,34 @@ class HomeScreen extends StatelessWidget {
 
   Future _scan(BuildContext context) async {
     try {
-      String barcode = await ScannerServiceProvider.of(context).scan();
-      final params = barcode.split('/');
-      final type = params[0];
-      final id = params[1];
-      if (type == 'vehicle') {
-        final vehicle = await VehicleServiceProvider.of(context).getById(id);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (c) => VehicleScreen(vehicle: vehicle),
-          ),
-        );
-      } else if (type == 'device') {
-        final device = await DeviceServiceProvider.of(context).getById(id);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (c) => DeviceScreen(device: device),
-          ),
-        );
+      final barcode = await ScannerServiceProvider.of(context).scan();
+      final info = LinkParserProvider.of(context).parse(barcode);
+      switch (info.type) {
+        case LinkType.DEVICE:
+          final device =
+              await DeviceServiceProvider.of(context).getById(info.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (c) => DeviceScreen(device: device),
+            ),
+          );
+          break;
+        case LinkType.VEHICLE:
+          final vehicle =
+              await VehicleServiceProvider.of(context).getById(info.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (c) => VehicleScreen(vehicle: vehicle),
+            ),
+          );
+          break;
       }
+    } on UnknownTypeException catch(e) {
+      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
+    } on FormatException catch(e) {
+      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
     } catch (e) {
       print('Error: $e');
     }

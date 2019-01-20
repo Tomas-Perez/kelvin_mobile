@@ -13,6 +13,6 @@ class VehicleServiceProvider extends InheritedWidget {
               as VehicleServiceProvider)
           .vehicleService;
 
-  VehicleServiceProvider({Key key, this.child, this.vehicleService})
+  const VehicleServiceProvider({Key key, this.child, this.vehicleService})
       : super(key: key);
 }
