@@ -8,12 +8,17 @@ abstract class VehicleService{
 }
 
 class MockVehicleService implements VehicleService {
+  final num delay;
+
   @override
   Future<Vehicle> getById(String id) =>
-      Future.value(vehicles.firstWhere((v) => v.id == id));
+      _withDelay(vehicles.firstWhere((v) => v.id == id, orElse: () => null));
 
   @override
-  Future<List<Vehicle>> getAll() => Future.value(vehicles);
+  Future<List<Vehicle>> getAll() => _withDelay(vehicles);
 
-  const MockVehicleService();
+  Future<T> _withDelay<T>(T value) =>
+      Future.delayed(Duration(milliseconds: delay), () => value);
+
+  const MockVehicleService({this.delay = 0});
 }

@@ -1,5 +1,5 @@
 class User {
-  String id, username, name, lastName;
+  final String id, username, name, lastName;
 
   User({this.id, this.username, this.name, this.lastName});
 }
@@ -13,15 +13,22 @@ class LoginInfo {
 }
 
 class Device {
-  String id, mac, alias;
+  final String id, mac, alias;
 
   Device({this.id, this.mac, this.alias});
 }
 
 class Vehicle {
-  String id, ownerId, domain, model, brand, deviceId;
-  num wheels;
+  final String id, ownerId, domain, model, brand, deviceId;
+  final num wheels;
 
   Vehicle({this.id, this.ownerId, this.domain, this.wheels, this.model,
       this.brand, this.deviceId});
+}
+
+class AssignedPair {
+  final Vehicle vehicle;
+  final Device device;
+
+  AssignedPair({this.vehicle, this.device});
 }

@@ -4,48 +4,51 @@ import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
-import 'package:kelvin_mobile/widgets/providers/device_service_provider.dart';
+import 'package:kelvin_mobile/widgets/loading.dart';
 import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
+import 'package:kelvin_mobile/widgets/vehicle_info.dart';
 
 class VehicleScreen extends StatelessWidget {
-  final Vehicle vehicle;
+  static final emptyFab = Container(height: 0, width: 0);
+
+  final Future<AssignedPair> future;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Vehículo'),
+    return FutureBuilder<AssignedPair>(
+      future: future,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            return _resultScreen(
+              pair: snapshot.data,
+              context: context,
+            );
+          case ConnectionState.waiting:
+            return _loadingScreen();
+          default:
+            throw Exception('wtf');
+        }
+      },
+    );
+  }
+
+  Widget _loadingScreen() {
+    return _scaffold(const Loading());
+  }
+
+  Widget _resultScreen({
+    @required AssignedPair pair,
+    @required BuildContext context,
+  }) {
+    return _scaffold(
+      VehicleInfo(
+        vehicle: pair.vehicle,
+        device: pair.device,
+        onDeviceTap: () => _pushDeviceScreen(pair, context),
       ),
-      body: ListView(
-        children: ListTile.divideTiles(
-          context: context,
-          tiles: <Widget>[
-            ListTile(
-              title: Text('ID'),
-              subtitle: Text(vehicle.id),
-            ),
-            ListTile(
-              title: Text('Patente'),
-              subtitle: Text(vehicle.domain),
-            ),
-            ListTile(
-              title: Text('Marca'),
-              subtitle: Text(vehicle.brand),
-            ),
-            ListTile(
-              title: Text('Modelo'),
-              subtitle: Text(vehicle.model),
-            ),
-            ListTile(
-              title: Text('Número de ruedas'),
-              subtitle: Text(vehicle.wheels.toString()),
-            ),
-            _deviceTile(vehicle.deviceId, context),
-          ],
-        ).toList(),
-      ),
-      floatingActionButton: Builder(
+      fab: Builder(
         builder: (c) {
           return FloatingActionButton(
             onPressed: () => _scan(c),
@@ -56,12 +59,22 @@ class VehicleScreen extends StatelessWidget {
     );
   }
 
+  Widget _scaffold(Widget body, {Widget fab}) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Vehículo'),
+      ),
+      body: body,
+      floatingActionButton: fab ?? emptyFab,
+    );
+  }
+
   Future _scan(BuildContext context) async {
     try {
       String barcode = await ScannerServiceProvider.of(context).scan();
       final info = LinkParserProvider.of(context).parse(barcode);
       if (info.type == LinkType.DEVICE) {
-        _pushDeviceScreen(info.id, context);
+        print('Assigning to device with id ${info.id}');
       } else {
         Errors.show(context, message: Errors.NOT_A_DEVICE);
       }
@@ -74,26 +87,14 @@ class VehicleScreen extends StatelessWidget {
     }
   }
 
-  Widget _deviceTile(String id, BuildContext context) {
-    return vehicle.deviceId == null
-        ? const ListTile(
-            title: Text('Dispositivo asignado'),
-            subtitle: Text('No asignado'),
-          )
-        : ListTile(
-            title: Text('Dispositivo asignado'),
-            subtitle: Text(vehicle.deviceId),
-            onTap: () => _pushDeviceScreen(vehicle.deviceId, context),
-          );
-  }
-
-  Future _pushDeviceScreen(String id, BuildContext context) async {
-    final device = await DeviceServiceProvider.of(context).getById(id);
+  Future _pushDeviceScreen(AssignedPair pair, BuildContext context) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (c) => DeviceScreen(device: device)),
+      MaterialPageRoute(
+        builder: (c) => DeviceScreen(future: Future.value(pair)),
+      ),
     );
   }
 
-  VehicleScreen({@required this.vehicle});
+  VehicleScreen({@required this.future});
 }

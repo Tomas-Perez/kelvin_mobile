@@ -9,6 +9,7 @@ import 'package:kelvin_mobile/screens/devices_screen.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/screens/vehicles_screen.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
+import 'package:kelvin_mobile/widgets/providers/assignment_service_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/device_service_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
@@ -57,33 +58,45 @@ class HomeScreen extends StatelessWidget {
       final info = LinkParserProvider.of(context).parse(barcode);
       switch (info.type) {
         case LinkType.DEVICE:
-          final device =
-              await DeviceServiceProvider.of(context).getById(info.id);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (c) => DeviceScreen(device: device),
-            ),
-          );
+          _onScannedDevice(info.id, context);
           break;
         case LinkType.VEHICLE:
-          final vehicle =
-              await VehicleServiceProvider.of(context).getById(info.id);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (c) => VehicleScreen(vehicle: vehicle),
-            ),
-          );
+          _onScannedVehicle(info.id, context);
           break;
       }
-    } on UnknownTypeException catch(e) {
+    } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.INVALID_CODE);
-    } on FormatException catch(e) {
+    } on FormatException catch (e) {
       Errors.show(context, exc: e, message: Errors.INVALID_CODE);
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  _onScannedDevice(String id, BuildContext context) {
+    final deviceFuture = DeviceServiceProvider.of(context).getById(id);
+    final pairFuture = deviceFuture
+        .then((d) => AssignmentServiceProvider.of(context).getDevicePair(d));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (c) => DeviceScreen(
+              future: pairFuture,
+            ),
+      ),
+    );
+  }
+
+  _onScannedVehicle(String id, BuildContext context) {
+    final vehicleFuture = VehicleServiceProvider.of(context).getById(id);
+    final pairFuture = vehicleFuture
+        .then((v) => AssignmentServiceProvider.of(context).getVehiclePair(v));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (c) => VehicleScreen(future: pairFuture),
+      ),
+    );
   }
 
   Widget _makeCard({

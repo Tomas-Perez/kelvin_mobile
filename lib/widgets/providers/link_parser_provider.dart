@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 
 class LinkParserProvider extends InheritedWidget {
