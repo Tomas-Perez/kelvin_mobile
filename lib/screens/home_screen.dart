@@ -11,6 +11,7 @@ import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
 import 'package:kelvin_mobile/services/vehicle_service.dart';
+import 'package:kelvin_mobile/widgets/home_card.dart';
 import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -26,17 +27,15 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.all(8.0),
           children: <Widget>[
-            _makeCard(
+            HomeCard(
               image: 'assets/trucks.jpg',
               title: 'Vehículos',
               onTap: () => _pushVehiclesScreen(context),
-              context: context,
             ),
-            _makeCard(
+            HomeCard(
               image: 'assets/electronics.jpg',
               title: 'Dispositivos',
               onTap: () => _pushDevicesScreen(context),
-              context: context,
             ),
           ],
         ),
@@ -97,54 +96,6 @@ class HomeScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (c) => VehicleScreen(future: pairFuture),
       ),
-    );
-  }
-
-  Widget _makeCard({
-    @required String image,
-    @required String title,
-    @required GestureTapCallback onTap,
-    @required BuildContext context,
-  }) {
-    return Stack(
-      children: <Widget>[
-        Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(4.0),
-                    topRight: Radius.circular(4.0),
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.fitWidth,
-                    image: AssetImage(image),
-                  ),
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  title,
-                  style: Theme.of(context).textTheme.title,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned.fill(
-          child: Container(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
