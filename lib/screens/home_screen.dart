@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:kelvin_mobile/errors/errors.dart';
-import 'package:kelvin_mobile/mock/devices.dart';
-import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/devices_screen.dart';
@@ -80,7 +78,8 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => DeviceScreen(
+        builder: (c) =>
+            DeviceScreen(
               future: pairFuture,
             ),
       ),
@@ -127,7 +126,10 @@ class HomeScreen extends StatelessWidget {
               ListTile(
                 title: Text(
                   title,
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .title,
                 ),
               ),
             ],
@@ -151,7 +153,11 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => VehiclesScreen(vehicles: vehicles),
+        builder: (c) {
+          return VehiclesScreen(
+            future: VehicleServiceProvider.of(context).getAll(),
+          );
+        },
       ),
     );
   }
@@ -160,7 +166,11 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => DevicesScreen(devices: devices),
+        builder: (c) {
+          return DevicesScreen(
+            future: DeviceServiceProvider.of(context).getAll(),
+          );
+        },
       ),
     );
   }

@@ -10,8 +10,6 @@ import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
 import 'package:kelvin_mobile/widgets/vehicle_info.dart';
 
 class VehicleScreen extends StatelessWidget {
-  static final emptyFab = Container(height: 0, width: 0);
-
   final Future<AssignedPair> future;
 
   @override
@@ -65,7 +63,7 @@ class VehicleScreen extends StatelessWidget {
         title: const Text('Vehículo'),
       ),
       body: body,
-      floatingActionButton: fab ?? emptyFab,
+      floatingActionButton: fab,
     );
   }
 

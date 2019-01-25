@@ -2,15 +2,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
+import 'package:kelvin_mobile/widgets/loading.dart';
 import 'package:kelvin_mobile/widgets/providers/assignment_service_provider.dart';
 import 'package:kelvin_mobile/widgets/search_scaffold.dart';
 import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class VehiclesScreen extends StatelessWidget {
-  final List<Vehicle> vehicles;
+  final Future<List<Vehicle>> future;
 
-  VehiclesScreen({@required List<Vehicle> vehicles})
-      : vehicles = vehicles..sort((a, b) => a.domain.compareTo(b.domain));
+  VehiclesScreen({@required this.future});
 
   Map<String, List<Vehicle>> _groupByInitials(List<Vehicle> vehicles) {
     return groupBy(vehicles, (v) => v.domain.substring(0, 1).toUpperCase());
@@ -25,6 +25,33 @@ class VehiclesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<List<Vehicle>>(
+      future: future,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            return _resultScreen(snapshot.data);
+          case ConnectionState.waiting:
+            return _loadingScreen();
+          default:
+            throw Exception('wtf');
+        }
+      },
+    );
+  }
+
+  Widget _loadingScreen() {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Vehículos'),
+      ),
+      body: Loading(),
+    );
+  }
+
+  Widget _resultScreen(List<Vehicle> vehicles) {
+    vehicles.sort((a, b) => a.domain.compareTo(b.domain));
+
     return SearchScaffold(
       bodyBuilder: (context, search) {
         return TextSectionList<Vehicle>(

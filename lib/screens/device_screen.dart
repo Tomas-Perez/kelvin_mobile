@@ -10,7 +10,6 @@ import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
 
 class DeviceScreen extends StatelessWidget {
-  static final emptyFab = Container(height: 0, width: 0);
   final Future<AssignedPair> future;
 
   @override
@@ -64,7 +63,7 @@ class DeviceScreen extends StatelessWidget {
         title: Text('Dispositivo'),
       ),
       body: body,
-      floatingActionButton: fab ?? emptyFab,
+      floatingActionButton: fab,
     );
   }
 
