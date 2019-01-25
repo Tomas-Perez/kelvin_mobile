@@ -2,15 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
+import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
-import 'package:kelvin_mobile/widgets/providers/assignment_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 import 'package:kelvin_mobile/widgets/search_scaffold.dart';
 import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class VehiclesScreen extends StatelessWidget {
   final Future<List<Vehicle>> future;
 
-  VehiclesScreen({@required this.future});
+  VehiclesScreen({Key key, @required this.future}) : super(key: key);
 
   Map<String, List<Vehicle>> _groupByInitials(List<Vehicle> vehicles) {
     return groupBy(vehicles, (v) => v.domain.substring(0, 1).toUpperCase());
@@ -72,7 +73,7 @@ class VehiclesScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => VehicleScreen(
               future:
-                  AssignmentServiceProvider.of(context).getVehiclePair(vehicle),
+              ServiceProvider.of<AssignmentService>(context).getVehiclePair(vehicle),
             ),
       ),
     );

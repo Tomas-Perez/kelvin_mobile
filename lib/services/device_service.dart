@@ -10,6 +10,8 @@ abstract class DeviceService {
 class MockDeviceService implements DeviceService {
   final num delay;
 
+  const MockDeviceService({this.delay = 0});
+
   @override
   Future<Device> getById(String id) =>
       _withDelay(devices.firstWhere((d) => d.id == id, orElse: () => null));
@@ -19,6 +21,4 @@ class MockDeviceService implements DeviceService {
 
   Future<T> _withDelay<T>(T value) =>
       Future.delayed(Duration(milliseconds: delay), () => value);
-
-  const MockDeviceService({this.delay = 0});
 }

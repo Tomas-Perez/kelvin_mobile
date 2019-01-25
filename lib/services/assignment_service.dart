@@ -14,6 +14,8 @@ class MockAssignmentService implements AssignmentService {
   final VehicleService vehicleService;
   final DeviceService deviceService;
 
+  const MockAssignmentService({this.vehicleService, this.deviceService});
+
   @override
   Future<AssignedPair> getVehiclePair(Vehicle vehicle) async {
     if (vehicle.deviceId == null)
@@ -40,6 +42,4 @@ class MockAssignmentService implements AssignmentService {
   Future assign(Vehicle vehicle, Device device) async {
     print('Assigning vehicle ${vehicle.id} to device ${device.id}');
   }
-
-  const MockAssignmentService({this.vehicleService, this.deviceService});
 }

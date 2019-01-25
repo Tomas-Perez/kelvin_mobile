@@ -6,6 +6,13 @@ class VehicleInfo extends StatelessWidget {
   final Device device;
   final Function() onDeviceTap;
 
+  VehicleInfo({
+    Key key,
+    @required this.vehicle,
+    @required this.device,
+    @required this.onDeviceTap,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -50,10 +57,4 @@ class VehicleInfo extends StatelessWidget {
             onTap: onDeviceTap,
           );
   }
-
-  VehicleInfo({
-    @required this.vehicle,
-    @required this.device,
-    @required this.onDeviceTap,
-  });
 }

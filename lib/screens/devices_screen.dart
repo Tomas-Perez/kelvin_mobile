@@ -2,15 +2,16 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
+import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
-import 'package:kelvin_mobile/widgets/providers/assignment_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 import 'package:kelvin_mobile/widgets/search_scaffold.dart';
 import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class DevicesScreen extends StatelessWidget {
   final Future<List<Device>> future;
 
-  DevicesScreen({@required this.future});
+  DevicesScreen({Key key, @required this.future}) : super(key: key);
 
   Map<String, List<Device>> _groupByInitials(List<Device> devices) {
     return groupBy(devices, (d) => d.alias.substring(0, 1).toUpperCase());
@@ -71,8 +72,8 @@ class DevicesScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (c) => DeviceScreen(
-              future:
-                  AssignmentServiceProvider.of(context).getDevicePair(device),
+              future: ServiceProvider.of<AssignmentService>(context)
+                  .getDevicePair(device),
             ),
       ),
     );

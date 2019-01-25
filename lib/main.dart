@@ -6,12 +6,8 @@ import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
 import 'package:kelvin_mobile/services/vehicle_service.dart';
-import 'package:kelvin_mobile/widgets/providers/assignment_service_provider.dart';
-import 'package:kelvin_mobile/widgets/providers/device_service_provider.dart';
-import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
 import 'package:kelvin_mobile/widgets/providers/mass_provider.dart';
-import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
-import 'package:kelvin_mobile/widgets/providers/vehicle_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,8 +24,8 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _provideServices({Widget app}) {
-    final deviceService = const MockDeviceService(delay: 10000);
-    final vehicleService = const MockVehicleService(delay: 10000);
+    final deviceService = const MockDeviceService();
+    final vehicleService = const MockVehicleService();
     final mockAssignmentService = MockAssignmentService(
       deviceService: deviceService,
       vehicleService: vehicleService,
@@ -38,34 +34,34 @@ class MyApp extends StatelessWidget {
     return provideAll(
       builders: [
         (c) {
-          return LinkParserProvider(
+          return ServiceProvider<LinkParser>(
             child: c,
-            linkParser: const LinkParser(),
+            service: const LinkParser(),
           );
         },
         (c) {
-          return ScannerServiceProvider(
+          return ServiceProvider<ScannerService>(
             child: c,
-            scannerService:
+            service:
                 MockScannerService(onScan: () => 'device/${devices[0].id}'),
           );
         },
         (c) {
-          return AssignmentServiceProvider(
+          return ServiceProvider<AssignmentService>(
             child: c,
-            assignmentService: mockAssignmentService,
+            service: mockAssignmentService,
           );
         },
         (c) {
-          return DeviceServiceProvider(
+          return ServiceProvider<DeviceService>(
             child: c,
-            deviceService: deviceService,
+            service: deviceService,
           );
         },
         (c) {
-          return VehicleServiceProvider(
+          return ServiceProvider<VehicleService>(
             child: c,
-            vehicleService: vehicleService,
+            service: vehicleService,
           );
         },
       ],

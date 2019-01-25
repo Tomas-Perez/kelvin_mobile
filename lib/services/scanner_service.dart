@@ -45,8 +45,8 @@ class QRScannerService implements ScannerService {
 class MockScannerService implements ScannerService {
   final String Function() onScan;
 
+  MockScannerService({this.onScan});
+
   @override
   Future<String> scan() => Future.value(onScan());
-
-  MockScannerService({this.onScan});
 }

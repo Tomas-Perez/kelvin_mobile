@@ -5,6 +5,13 @@ class SectionList<H, D> extends StatelessWidget {
   final Widget Function(BuildContext, H, int) headerBuilder;
   final List<Widget> Function(BuildContext context, List<D> data) bodyBuilder;
 
+  SectionList({
+    Key key,
+    this.sections,
+    this.headerBuilder,
+    this.bodyBuilder,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     int sectionIndex = 0;
@@ -20,6 +27,4 @@ class SectionList<H, D> extends StatelessWidget {
       }).toList(),
     );
   }
-
-  SectionList({this.sections, this.headerBuilder, this.bodyBuilder});
 }

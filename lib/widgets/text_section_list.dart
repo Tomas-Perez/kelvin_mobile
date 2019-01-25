@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kelvin_mobile/widgets/section_list.dart';
 
-
 class TextSectionList<V> extends StatelessWidget {
   final Map<String, List<V>> sections;
   final String Function(V) valueToString;
   final void Function(V) onTap;
+
+  TextSectionList({
+    Key key,
+    this.sections,
+    this.valueToString,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +44,4 @@ class TextSectionList<V> extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     );
   }
-
-  TextSectionList({this.sections, this.valueToString, this.onTap});
 }

@@ -1,4 +1,6 @@
 class LinkParser {
+  const LinkParser();
+
   LinkInfo parse(String link) {
     final linkParts = link.split('/');
     if (linkParts.length != 2) throw FormatException();
@@ -6,8 +8,6 @@ class LinkParser {
     final id = linkParts[1];
     return LinkInfo.fromTypeString(type: type, id: id);
   }
-
-  const LinkParser();
 }
 
 class LinkInfo {
@@ -15,6 +15,8 @@ class LinkInfo {
   final String id;
 
   LinkInfo({this.type, this.id});
+
+  LinkInfo.fromTypeString({String type, this.id}) : type = stringToType(type);
 
   static LinkType stringToType(String type) {
     switch (type) {
@@ -26,8 +28,6 @@ class LinkInfo {
         throw UnknownTypeException();
     }
   }
-
-  LinkInfo.fromTypeString({String type, this.id}) : type = stringToType(type);
 }
 
 enum LinkType { DEVICE, VEHICLE }

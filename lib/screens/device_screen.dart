@@ -4,13 +4,15 @@ import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
+import 'package:kelvin_mobile/services/scanner_service.dart';
 import 'package:kelvin_mobile/widgets/device_info.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
-import 'package:kelvin_mobile/widgets/providers/link_parser_provider.dart';
-import 'package:kelvin_mobile/widgets/providers/scanner_service_provider.dart';
+import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 
 class DeviceScreen extends StatelessWidget {
   final Future<AssignedPair> future;
+
+  DeviceScreen({Key key, @required this.future}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +80,8 @@ class DeviceScreen extends StatelessWidget {
 
   Future _scan(BuildContext context) async {
     try {
-      final barcode = await ScannerServiceProvider.of(context).scan();
-      final info = LinkParserProvider.of(context).parse(barcode);
+      final barcode = await ServiceProvider.of<ScannerService>(context).scan();
+      final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
       if (info.type == LinkType.VEHICLE) {
         print('Assigning to vehicle with id ${info.id}');
       } else {
@@ -93,6 +95,4 @@ class DeviceScreen extends StatelessWidget {
       Errors.show(context, exc: e);
     }
   }
-
-  DeviceScreen({@required this.future});
 }
