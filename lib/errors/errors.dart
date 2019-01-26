@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Errors {
   Errors._();
 
-  static show(BuildContext context, {Exception exc, String message = GENERIC}) {
+  static show(BuildContext context, {Exception exc, String message = generic}) {
     if (exc != null) {
       print(StackTrace.current);
     }
@@ -11,8 +11,8 @@ class Errors {
     Scaffold.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  static const GENERIC = 'Ocurrio un problema';
-  static const INVALID_CODE = 'Código inválido';
-  static const NOT_A_VEHICLE = 'El código no pertenece a un vehículo';
-  static const NOT_A_DEVICE = 'El código no pertenece a un dispositivo';
+  static const generic = 'Ocurrio un problema';
+  static const invalidCode = 'Código inválido';
+  static const notAVehicle = 'El código no pertenece a un vehículo';
+  static const notADevice = 'El código no pertenece a un dispositivo';
 }

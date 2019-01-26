@@ -1,42 +1,29 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
-import 'package:kelvin_mobile/services/assignment_service.dart';
+import 'package:kelvin_mobile/utils/funcs.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
-import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 import 'package:kelvin_mobile/widgets/search_scaffold.dart';
 import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class DevicesScreen extends StatelessWidget {
-  final Future<List<Device>> future;
 
-  DevicesScreen({Key key, @required this.future}) : super(key: key);
-
-  Map<String, List<Device>> _groupByInitials(List<Device> devices) {
-    return groupBy(devices, (d) => d.alias.substring(0, 1).toUpperCase());
-  }
-
-  bool _filter(String alias, String search) {
-    return alias
-        .toLowerCase()
-        .trim()
-        .contains(RegExp(r'' + search.toLowerCase().trim() + ''));
-  }
+  DevicesScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Device>>(
-      future: future,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            return _resultScreen(snapshot.data);
-          case ConnectionState.waiting:
-            return _loadingScreen();
-          default:
-            throw Exception('wtf');
+    return BlocBuilder<DevicesAction, DevicesState>(
+      bloc: BlocProvider.of<DevicesBloc>(context),
+      builder: (context, state) {
+        if (state.loading && state.devices.isEmpty) {
+          return _loadingScreen();
         }
+        if (state.hasError) {
+          throw Exception(state.errorMessage);
+        }
+        return _resultScreen(state.devices);
       },
     );
   }
@@ -55,11 +42,16 @@ class DevicesScreen extends StatelessWidget {
 
     return SearchScaffold(
       bodyBuilder: (context, search) {
-        return TextSectionList<Device>(
-          sections: _groupByInitials(
-              devices.where((d) => _filter(d.alias, search)).toList()),
-          valueToString: (d) => d.alias,
-          onTap: (d) => _pushDeviceScreen(context, d),
+        return RefreshIndicator(
+          onRefresh: () => _onRefresh(context),
+          child: TextSectionList<Device>(
+            sections: groupByInitials(
+              devices.where((d) => searchFilter(d.alias, search)).toList(),
+              toString: (d) => d.alias,
+            ),
+            valueToString: (d) => d.alias,
+            onTap: (d) => _pushDeviceScreen(context, d),
+          ),
         );
       },
       title: 'Dispositivos',
@@ -71,11 +63,24 @@ class DevicesScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => DeviceScreen(
-              future: ServiceProvider.of<AssignmentService>(context)
-                  .getDevicePair(device),
-            ),
+        builder: (c) => DeviceScreen(deviceId: device.id),
       ),
     );
+  }
+
+  Future _onRefresh(BuildContext context) async {
+    final bloc = BlocProvider.of<DevicesBloc>(context);
+    bloc.load();
+    var alreadyLoading = false;
+    await bloc.state.firstWhere((s) {
+      if (!alreadyLoading) {
+        if (s.loading) {
+          alreadyLoading = true;
+        }
+      } else if (!s.loading) {
+        return true;
+      }
+      return false;
+    });
   }
 }

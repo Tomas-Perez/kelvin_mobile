@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/assignment_bloc.dart';
+import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
@@ -9,33 +13,47 @@ import 'package:kelvin_mobile/widgets/device_info.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
 import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 
-class DeviceScreen extends StatelessWidget {
-  final Future<AssignedPair> future;
+class DeviceScreen extends StatefulWidget {
+  final String deviceId;
 
-  DeviceScreen({Key key, @required this.future}) : super(key: key);
+  DeviceScreen({Key key, @required this.deviceId}) : super(key: key);
+
+  @override
+  DeviceScreenState createState() => DeviceScreenState();
+}
+
+class DeviceScreenState extends State<DeviceScreen> {
+  AssignmentBloc _assignmentBloc;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: future,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            return _resultScreen(
-              pair: snapshot.data,
-              context: context,
-            );
-          case ConnectionState.waiting:
-            return _loadingScreen();
-          default:
-            throw Exception('wtf');
+    return BlocBuilder<AssignmentAction, AssignmentState>(
+      bloc: _assignmentBloc,
+      builder: (context, state) {
+        if (!state.initialized) {
+          return _emptyScreen();
         }
+        if (state.loading) {
+          return _loadingScreen();
+        }
+        if (state.hasError) {
+          throw Exception(state.errorMessage);
+        }
+
+        return _resultScreen(
+          pair: state.pair,
+          context: context,
+        );
       },
     );
   }
 
   Widget _loadingScreen() {
     return _scaffold(const Loading());
+  }
+
+  Widget _emptyScreen() {
+    return _scaffold(Container());
   }
 
   Widget _resultScreen({
@@ -73,7 +91,7 @@ class DeviceScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => VehicleScreen(future: Future.value(pair)),
+        builder: (c) => VehicleScreen(vehicleId: pair.vehicle.id),
       ),
     );
   }
@@ -82,17 +100,33 @@ class DeviceScreen extends StatelessWidget {
     try {
       final barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
-      if (info.type == LinkType.VEHICLE) {
+      if (info.type == LinkType.vehicle) {
         print('Assigning to vehicle with id ${info.id}');
       } else {
-        Errors.show(context, message: Errors.NOT_A_VEHICLE);
+        Errors.show(context, message: Errors.notAVehicle);
       }
     } on UnknownTypeException catch (e) {
-      Errors.show(context, exc: e, message: Errors.NOT_A_VEHICLE);
+      Errors.show(context, exc: e, message: Errors.notAVehicle);
     } on FormatException catch (e) {
-      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } catch (e) {
       Errors.show(context, exc: e);
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _assignmentBloc.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _assignmentBloc = AssignmentBloc.forDevice(
+      devicesBloc: BlocProvider.of<DevicesBloc>(context),
+      vehiclesBloc:  BlocProvider.of<VehiclesBloc>(context),
+      deviceId: widget.deviceId,
+    );
   }
 }

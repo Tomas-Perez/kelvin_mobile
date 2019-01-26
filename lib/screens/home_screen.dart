@@ -6,11 +6,8 @@ import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/devices_screen.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/screens/vehicles_screen.dart';
-import 'package:kelvin_mobile/services/assignment_service.dart';
-import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
-import 'package:kelvin_mobile/services/vehicle_service.dart';
 import 'package:kelvin_mobile/widgets/home_card.dart';
 import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
 
@@ -56,45 +53,36 @@ class HomeScreen extends StatelessWidget {
       final barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
       switch (info.type) {
-        case LinkType.DEVICE:
+        case LinkType.device:
           _onScannedDevice(info.id, context);
           break;
-        case LinkType.VEHICLE:
+        case LinkType.vehicle:
           _onScannedVehicle(info.id, context);
           break;
       }
     } on UnknownTypeException catch (e) {
-      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } on FormatException catch (e) {
-      Errors.show(context, exc: e, message: Errors.INVALID_CODE);
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } catch (e) {
       print('Error: $e');
     }
   }
 
   _onScannedDevice(String id, BuildContext context) {
-    final deviceFuture = ServiceProvider.of<DeviceService>(context).getById(id);
-    final pairFuture = deviceFuture.then(
-        (d) => ServiceProvider.of<AssignmentService>(context).getDevicePair(d));
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => DeviceScreen(
-              future: pairFuture,
-            ),
+        builder: (c) => DeviceScreen(deviceId: id),
       ),
     );
   }
 
   _onScannedVehicle(String id, BuildContext context) {
-    final vehicleFuture =
-        ServiceProvider.of<VehicleService>(context).getById(id);
-    final pairFuture = vehicleFuture.then((v) =>
-        ServiceProvider.of<AssignmentService>(context).getVehiclePair(v));
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) => VehicleScreen(future: pairFuture),
+        builder: (c) => VehicleScreen(vehicleId: id),
       ),
     );
   }
@@ -103,11 +91,7 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (c) {
-          return VehiclesScreen(
-            future: ServiceProvider.of<VehicleService>(context).getAll(),
-          );
-        },
+        builder: (c) => VehiclesScreen(),
       ),
     );
   }
@@ -117,9 +101,7 @@ class HomeScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (c) {
-          return DevicesScreen(
-            future: ServiceProvider.of<DeviceService>(context).getAll(),
-          );
+          return DevicesScreen();
         },
       ),
     );

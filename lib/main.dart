@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/screens/home_screen.dart';
-import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
@@ -24,15 +26,20 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _provideServices({Widget app}) {
-    final deviceService = const MockDeviceService();
-    final vehicleService = const MockVehicleService();
-    final mockAssignmentService = MockAssignmentService(
-      deviceService: deviceService,
-      vehicleService: vehicleService,
-    );
-
     return provideAll(
       builders: [
+        (c) {
+          return BlocProvider<VehiclesBloc>(
+            bloc: VehiclesBloc(MockVehicleService())..load(),
+            child: c,
+          );
+        },
+        (c) {
+          return BlocProvider<DevicesBloc>(
+            bloc: DevicesBloc(MockDeviceService())..load(),
+            child: c,
+          );
+        },
         (c) {
           return ServiceProvider<LinkParser>(
             child: c,
@@ -44,24 +51,6 @@ class MyApp extends StatelessWidget {
             child: c,
             service:
                 MockScannerService(onScan: () => 'device/${devices[0].id}'),
-          );
-        },
-        (c) {
-          return ServiceProvider<AssignmentService>(
-            child: c,
-            service: mockAssignmentService,
-          );
-        },
-        (c) {
-          return ServiceProvider<DeviceService>(
-            child: c,
-            service: deviceService,
-          );
-        },
-        (c) {
-          return ServiceProvider<VehicleService>(
-            child: c,
-            service: vehicleService,
           );
         },
       ],

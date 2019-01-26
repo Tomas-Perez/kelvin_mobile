@@ -21,16 +21,16 @@ class LinkInfo {
   static LinkType stringToType(String type) {
     switch (type) {
       case 'device':
-        return LinkType.DEVICE;
+        return LinkType.device;
       case 'vehicle':
-        return LinkType.VEHICLE;
+        return LinkType.vehicle;
       default:
         throw UnknownTypeException();
     }
   }
 }
 
-enum LinkType { DEVICE, VEHICLE }
+enum LinkType { device, vehicle }
 
 class LinkParseException implements Exception {
   final String message;

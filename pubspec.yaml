@@ -18,6 +18,8 @@ dependencies:
 
   barcode_scan: ^0.0.8
   material_search: ^0.2.8
+  bloc: ^0.8.1
+  flutter_bloc: ^0.5.2
 
 dev_dependencies:
   flutter_test:
