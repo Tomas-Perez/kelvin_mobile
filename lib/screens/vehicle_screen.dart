@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kelvin_mobile/blocs/assignment_bloc.dart';
+import 'package:kelvin_mobile/blocs/assignment/assignment.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/errors/errors.dart';
-import 'package:kelvin_mobile/presentation/custom_icons_icons.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
+import 'package:kelvin_mobile/utils/dialogs.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
 import 'package:kelvin_mobile/widgets/providers/service_provider.dart';
+import 'package:kelvin_mobile/widgets/qr_link_icon.dart';
 import 'package:kelvin_mobile/widgets/vehicle_info.dart';
 
 class VehicleScreen extends StatefulWidget {
@@ -63,13 +64,47 @@ class VehicleScreenState extends State<VehicleScreen> {
       ),
       fab: Builder(
         builder: (c) {
-          return FloatingActionButton(
-            onPressed: () => _scan(c),
-            child: Icon(CustomIcons.qrcode),
-          );
+          if (pair.device == null) {
+            return FloatingActionButton(
+              onPressed: () => _scan(c),
+              child: QRLinkIcon(),
+            );
+          } else {
+            return FloatingActionButton(
+              backgroundColor: Theme.of(context).errorColor,
+              onPressed: _unlinkDialog,
+              child: Icon(Icons.link_off),
+            );
+          }
         },
       ),
     );
+  }
+
+  _unlinkDialog() async {
+    final a = await showConfirmationDialog(
+      '¿Está seguro que desea desasignar el vehículo?',
+      context,
+    );
+
+    if (a) {
+      print('yes');
+    } else {
+      print('no');
+    }
+  }
+
+  _linkDialog(String id) async {
+    final a = await showConfirmationDialog(
+      '¿Está seguro que desea asignar el vehículo al dispositivo $id?',
+      context,
+    );
+
+    if (a) {
+      print('yes');
+    } else {
+      print('no');
+    }
   }
 
   Widget _scaffold(Widget body, {Widget fab}) {
@@ -87,7 +122,7 @@ class VehicleScreenState extends State<VehicleScreen> {
       String barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
       if (info.type == LinkType.device) {
-        print('Assigning to device with id ${info.id}');
+        _linkDialog(info.id);
       } else {
         Errors.show(context, message: Errors.notADevice);
       }

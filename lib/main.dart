@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _provideServices(
-      app: const MaterialApp(
+      app: MaterialApp(
+        theme: ThemeData.light(),
         title: 'Kelvin',
         home: const HomeScreen(),
       ),

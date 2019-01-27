@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:kelvin_mobile/blocs/assignment/assignment_action.dart';
+import 'package:kelvin_mobile/blocs/assignment/assignment_state.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
-import 'package:kelvin_mobile/data.dart';
 import 'package:meta/meta.dart';
 
 class AssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
@@ -140,103 +141,5 @@ class AssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
   void dispose() {
     super.dispose();
     _subscriptions.forEach((s) => s.cancel());
-  }
-}
-
-@immutable
-class AssignmentState {
-  final AssignedPair pair;
-  final bool loading;
-  final bool hasError;
-  final String errorMessage;
-  final bool initialized;
-
-  static final _initialState =
-      AssignmentState._(pair: AssignedPair(), initialized: false);
-
-  AssignmentState._({
-    this.pair,
-    this.loading = false,
-    this.hasError = false,
-    this.errorMessage = '',
-    this.initialized = true,
-  });
-
-  factory AssignmentState.initial() => _initialState;
-
-  factory AssignmentState.from(AssignedPair pair) {
-    return AssignmentState._(pair: pair);
-  }
-
-  AssignmentState setLoading() {
-    return AssignmentState._(pair: pair, loading: true);
-  }
-
-  AssignmentState setVehicle(Vehicle vehicle) {
-    return AssignmentState.from(
-      AssignedPair(vehicle: vehicle, device: pair.device),
-    );
-  }
-
-  AssignmentState setDevice(Device device) {
-    return AssignmentState.from(
-      AssignedPair(vehicle: pair.vehicle, device: device),
-    );
-  }
-
-  AssignmentState setError(String message) {
-    return AssignmentState._(
-      pair: pair,
-      hasError: true,
-      errorMessage: message,
-    );
-  }
-}
-
-abstract class AssignmentAction {
-  const AssignmentAction();
-
-  AssignmentState perform(AssignmentState state) => state;
-}
-
-class AssignmentError extends AssignmentAction {
-  final String errorMessage;
-
-  const AssignmentError(this.errorMessage);
-
-  @override
-  AssignmentState perform(AssignmentState state) {
-    return state.setError(errorMessage);
-  }
-}
-
-class AssignmentLoading extends AssignmentAction {
-  const AssignmentLoading();
-
-  @override
-  AssignmentState perform(AssignmentState state) {
-    return state.setLoading();
-  }
-}
-
-class VehicleUpdate extends AssignmentAction {
-  final Vehicle vehicle;
-
-  VehicleUpdate(this.vehicle);
-
-  @override
-  AssignmentState perform(AssignmentState state) {
-    return state.setVehicle(vehicle);
-  }
-}
-
-class DeviceUpdate extends AssignmentAction {
-  final Device device;
-
-  DeviceUpdate(this.device);
-
-  @override
-  AssignmentState perform(AssignmentState state) {
-    return state.setDevice(device);
   }
 }
