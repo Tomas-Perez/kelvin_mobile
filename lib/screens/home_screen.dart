@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/devices_screen.dart';
+import 'package:kelvin_mobile/screens/settings_screen.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/screens/vehicles_screen.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
@@ -19,6 +20,13 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Kelvin'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => _pushSettingsScreen(context),
+            tooltip: 'Ajustes',
+            icon: Icon(Icons.settings),
+          )
+        ],
       ),
       body: Center(
         child: ListView(
@@ -42,6 +50,7 @@ class HomeScreen extends StatelessWidget {
           return FloatingActionButton(
             onPressed: () => _scan(c),
             child: QRSearchIcon(),
+            tooltip: 'Búsqueda QR',
           );
         },
       ),
@@ -83,6 +92,15 @@ class HomeScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (c) => VehicleScreen(vehicleId: id),
+      ),
+    );
+  }
+
+  void _pushSettingsScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (c) => SettingsScreen(),
       ),
     );
   }

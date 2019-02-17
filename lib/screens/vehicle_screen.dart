@@ -71,12 +71,14 @@ class VehicleScreenState extends State<VehicleScreen> {
             return FloatingActionButton(
               onPressed: () => _scan(c),
               child: QRLinkIcon(),
+              tooltip: 'Asignar con QR',
             );
           } else {
             return FloatingActionButton(
               backgroundColor: Theme.of(context).errorColor,
               onPressed: _unassignDialog,
               child: Icon(Icons.link_off),
+              tooltip: 'Desasignar',
             );
           }
         },
@@ -96,19 +98,6 @@ class VehicleScreenState extends State<VehicleScreen> {
       } catch (e) {
         Errors.show(context, exc: e);
       }
-    } else {
-      print('no');
-    }
-  }
-
-  _linkDialog(String id) async {
-    final a = await showConfirmationDialog(
-      '¿Está seguro que desea asignar el vehículo al dispositivo $id?',
-      context,
-    );
-
-    if (a) {
-      print('yes');
     } else {
       print('no');
     }

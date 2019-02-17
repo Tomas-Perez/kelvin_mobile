@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/screens/home_screen.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
+import 'package:kelvin_mobile/services/connection_service.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
@@ -33,6 +35,15 @@ class MyApp extends StatelessWidget {
 
     return provideAll(
       builders: [
+        (c) {
+          return BlocProvider<ApiConnectionBloc>(
+            bloc: ApiConnectionBloc(
+              initialUrl: 'localhost:8080',
+              connectionService: MockConnectionService(500),
+            ),
+            child: c,
+          );
+        },
         (c) {
           return BlocProvider<VehiclesBloc>(
             bloc: VehiclesBloc(MockVehicleService())..load(),

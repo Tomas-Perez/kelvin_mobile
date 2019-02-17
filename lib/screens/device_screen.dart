@@ -76,12 +76,14 @@ class DeviceScreenState extends State<DeviceScreen> {
             return FloatingActionButton(
               onPressed: () => _scan(c),
               child: QRLinkIcon(),
+              tooltip: 'Asignar con QR',
             );
           } else {
             return FloatingActionButton(
               backgroundColor: Theme.of(context).errorColor,
               onPressed: _unassignDialog,
               child: Icon(Icons.link_off),
+              tooltip: 'Desasignar',
             );
           }
         },

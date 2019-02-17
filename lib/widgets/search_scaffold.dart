@@ -99,7 +99,7 @@ class _SearchScaffoldState extends State<SearchScaffold> {
       actions: <Widget>[
         IconButton(
           onPressed: _handleSearch,
-          tooltip: 'Search',
+          tooltip: 'Buscar',
           icon: Icon(Icons.search),
         )
       ],
@@ -118,7 +118,7 @@ class _SearchScaffoldState extends State<SearchScaffold> {
       actions: <Widget>[
         IconButton(
           onPressed: _handleCancel,
-          tooltip: 'Cancel',
+          tooltip: 'Cancelar',
           icon: Icon(Icons.clear),
         )
       ],
