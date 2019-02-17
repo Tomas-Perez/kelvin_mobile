@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelvin_mobile/widgets/loading.dart';
 
 Future<bool> showConfirmationDialog(String message, BuildContext context) {
   return showDialog<bool>(
@@ -20,6 +21,46 @@ Future<bool> showConfirmationDialog(String message, BuildContext context) {
       );
     },
   );
+}
+
+Future<DialogResult<T>> showLoadingDialog<T>(Future<T> run, BuildContext context,
+    {String text}) {
+  var shown = true;
+  return showDialog<DialogResult<T>>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      run.then((value) {
+        if (shown) Navigator.pop(context, DialogResult.from(value));
+      });
+      return AlertDialog(
+        title: Column(
+          children: <Widget>[
+            Text(text),
+            SizedBox(height: 30.0),
+            Loading(),
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              shown = false;
+              Navigator.pop(context, DialogResult<T>.dismissed());
+            },
+            child: const Text('Cancelar'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class DialogResult<R>{
+  final R result;
+  final bool dismissed;
+
+  DialogResult.from(this.result) : dismissed = false;
+  DialogResult.dismissed() : result = null, dismissed = true;
 }
 
 /*

@@ -1,4 +1,5 @@
 import 'package:kelvin_mobile/data.dart';
+import 'package:kelvin_mobile/mock/devices.dart';
 
 final vehicles = [
   Vehicle(
@@ -17,7 +18,7 @@ final vehicles = [
     wheels: 2,
     model: '110',
     brand: 'Zanella',
-    deviceId: '94568750',
+    deviceId: devices[0].id,
   ),
   Vehicle(
     id: '232096570',
@@ -26,7 +27,7 @@ final vehicles = [
     wheels: 10,
     model: 'Something',
     brand: 'Scania',
-    deviceId: '12049205034',
+    deviceId: devices[1].id,
   ),
   Vehicle(
     id: '2394023043',
@@ -35,7 +36,7 @@ final vehicles = [
     wheels: 12,
     model: 'Else',
     brand: 'Mercedes-Benz',
-    deviceId: '546003284',
+    deviceId: devices[2].id,
   ),
   Vehicle(
     id: '12039059340',
@@ -44,6 +45,6 @@ final vehicles = [
     wheels: 8,
     model: 'Giff',
     brand: 'Volvo',
-    deviceId: '12049205034',
+    deviceId: devices[3].id,
   ),
 ];

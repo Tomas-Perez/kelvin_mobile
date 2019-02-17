@@ -1,4 +1,6 @@
 import 'package:kelvin_mobile/data.dart';
+import 'package:kelvin_mobile/mock/devices.dart';
+import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/vehicle_service.dart';
 
@@ -8,6 +10,8 @@ abstract class AssignmentService {
   Future<AssignedPair> getDevicePair(Device device);
 
   Future assign(Vehicle vehicle, Device device);
+
+  Future unassign(AssignedPair pair);
 }
 
 class MockAssignmentService implements AssignmentService {
@@ -40,6 +44,67 @@ class MockAssignmentService implements AssignmentService {
 
   @override
   Future assign(Vehicle vehicle, Device device) async {
-    print('Assigning vehicle ${vehicle.id} to device ${device.id}');
+    final foundVehicle =
+        vehicles.firstWhere((v) => v.id == vehicle.id, orElse: () => null);
+
+    if (foundVehicle == null) {
+      throw NotFoundException('No vehicle');
+    }
+
+    final foundDevice =
+        devices.firstWhere((d) => d.id == device.id, orElse: () => null);
+
+    if (foundDevice == null) {
+      throw NotFoundException('No device');
+    }
+
+    vehicles.remove(foundVehicle);
+    vehicles.add(
+      Vehicle(
+        id: foundVehicle.id,
+        ownerId: foundVehicle.ownerId,
+        deviceId: foundDevice.id,
+        domain: foundVehicle.domain,
+        model: foundVehicle.model,
+        wheels: foundVehicle.wheels,
+        brand: foundVehicle.brand,
+      ),
+    );
   }
+
+  @override
+  Future unassign(AssignedPair pair) async {
+    Vehicle foundVehicle;
+
+    if (pair.vehicle != null) {
+      foundVehicle =
+          vehicles.firstWhere((v) => v.id == pair.vehicle.id, orElse: () => null);
+    } else if (pair.device != null) {
+      foundVehicle = vehicles.firstWhere((v) => v.deviceId == pair.device.id,
+          orElse: () => null);
+    }
+
+    if (foundVehicle == null) {
+      throw NotFoundException('No vehicle');
+    }
+
+    vehicles.remove(foundVehicle);
+    vehicles.add(
+      Vehicle(
+        id: foundVehicle.id,
+        ownerId: foundVehicle.ownerId,
+        deviceId: null,
+        domain: foundVehicle.domain,
+        model: foundVehicle.model,
+        wheels: foundVehicle.wheels,
+        brand: foundVehicle.brand,
+      ),
+    );
+  }
+}
+
+class NotFoundException implements Exception {
+  final String message;
+
+  const NotFoundException(this.message);
 }

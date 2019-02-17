@@ -4,6 +4,7 @@ import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/screens/home_screen.dart';
+import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _provideServices({Widget app}) {
+    final vehicleService = MockVehicleService();
+    final deviceService = MockDeviceService();
+
     return provideAll(
       builders: [
         (c) {
@@ -39,6 +43,15 @@ class MyApp extends StatelessWidget {
           return BlocProvider<DevicesBloc>(
             bloc: DevicesBloc(MockDeviceService())..load(),
             child: c,
+          );
+        },
+        (c) {
+          return ServiceProvider<AssignmentService>(
+            child: c,
+            service: MockAssignmentService(
+              deviceService: deviceService,
+              vehicleService: vehicleService,
+            ),
           );
         },
         (c) {

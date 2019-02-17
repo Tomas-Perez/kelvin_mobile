@@ -11,7 +11,6 @@ class DeviceBloc extends Bloc<DeviceAction, DeviceState> {
   StreamSubscription _subscription;
 
   DeviceBloc(this.devicesBloc, this.deviceId) {
-    _onDevicesUpdate(devicesBloc.currentState);
     _subscription = devicesBloc.state.listen(_onDevicesUpdate);
   }
 

@@ -18,6 +18,8 @@ class VehiclesBloc extends Bloc<VehiclesAction, VehiclesState> {
     VehiclesState currentState,
     VehiclesAction event,
   ) async* {
+    print('vehicles event');
+    print(event);
     if (event is LoadVehicles) {
       yield currentState.setLoading();
       try {
@@ -32,6 +34,14 @@ class VehiclesBloc extends Bloc<VehiclesAction, VehiclesState> {
       yield currentState;
     }
   }
+
+  @override
+  void dispose() {
+    print('disposing vehicles');
+    super.dispose();
+  }
+
+
 }
 
 @immutable

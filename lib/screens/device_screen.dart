@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/assignment/assignment.dart';
+import 'package:kelvin_mobile/blocs/assignment/device_assignment_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/vehicle_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
+import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
 import 'package:kelvin_mobile/utils/dialogs.dart';
@@ -24,7 +27,7 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class DeviceScreenState extends State<DeviceScreen> {
-  AssignmentBloc _assignmentBloc;
+  DeviceAssignmentBloc _assignmentBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +80,7 @@ class DeviceScreenState extends State<DeviceScreen> {
           } else {
             return FloatingActionButton(
               backgroundColor: Theme.of(context).errorColor,
-              onPressed: _unlinkDialog,
+              onPressed: _unassignDialog,
               child: Icon(Icons.link_off),
             );
           }
@@ -86,30 +89,28 @@ class DeviceScreenState extends State<DeviceScreen> {
     );
   }
 
-  _unlinkDialog() async {
-    final a = await showConfirmationDialog(
+  _unassignDialog() async {
+    final unassign = await showConfirmationDialog(
       '¿Está seguro que desea desasignar el dispositivo?',
       context,
     );
 
-    if (a) {
-      print('yes');
+    if (unassign) {
+      try {
+        _assignmentBloc.unassign();
+      } catch (e) {
+        Errors.show(context, exc: e);
+      }
     } else {
       print('no');
     }
   }
 
-  _linkDialog(String id) async {
-    final a = await showConfirmationDialog(
-      '¿Está seguro que desea asignar el dispositivo al vehículo $id?',
+  Future<bool> _assignDialog(String domain) async {
+    return await showConfirmationDialog(
+      '¿Está seguro que desea asignar el dispositivo al vehículo $domain?',
       context,
     );
-
-    if (a) {
-      print('yes');
-    } else {
-      print('no');
-    }
   }
 
   Widget _scaffold(Widget body, {Widget fab}) {
@@ -136,7 +137,7 @@ class DeviceScreenState extends State<DeviceScreen> {
       final barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
       if (info.type == LinkType.vehicle) {
-        _linkDialog(info.id);
+        _assignVehicle(info.id, context);
       } else {
         Errors.show(context, message: Errors.notAVehicle);
       }
@@ -149,18 +150,61 @@ class DeviceScreenState extends State<DeviceScreen> {
     }
   }
 
+  _assignVehicle(String id, BuildContext context) async {
+    final vehicleBloc = VehicleBloc(
+      BlocProvider.of<VehiclesBloc>(context),
+      id,
+    );
+
+    Future<Vehicle> searchVehicle = vehicleBloc.state
+        .firstWhere((s) => !s.loading && (s.vehicle != null || s.hasError))
+        .then((s) => s.vehicle);
+
+    try {
+      final vehicleDialogResult = await showLoadingDialog<Vehicle>(
+        searchVehicle,
+        context,
+        text: 'Por favor espere',
+      );
+
+      if (!vehicleDialogResult.dismissed) {
+        final vehicle = vehicleDialogResult.result;
+        if (vehicle == null) {
+          Errors.show(context, message: Errors.vehicleNotFound);
+        } else {
+          final assign = await _assignDialog(vehicle.domain);
+          if (assign) {
+            try {
+              await _assignmentBloc.assignVehicle(vehicle);
+            } catch (e) {
+              Errors.show(context, exc: e);
+            }
+          } else {
+            print('no');
+          }
+        }
+      }
+    } catch (e) {
+      Errors.show(context, exc: e);
+    } finally {
+      vehicleBloc.dispose();
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
     _assignmentBloc.dispose();
   }
 
+
   @override
-  void initState() {
-    super.initState();
-    _assignmentBloc = AssignmentBloc.forDevice(
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _assignmentBloc = DeviceAssignmentBloc(
       devicesBloc: BlocProvider.of<DevicesBloc>(context),
       vehiclesBloc: BlocProvider.of<VehiclesBloc>(context),
+      assignmentService: ServiceProvider.of<AssignmentService>(context),
       deviceId: widget.deviceId,
     );
   }

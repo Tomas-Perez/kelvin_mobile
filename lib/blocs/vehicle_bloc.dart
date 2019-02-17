@@ -11,7 +11,6 @@ class VehicleBloc extends Bloc<VehicleAction, VehicleState> {
   StreamSubscription _subscription;
 
   VehicleBloc(this.vehiclesBloc, this.vehicleId) {
-    _onVehiclesUpdate(vehiclesBloc.currentState);
     _subscription = vehiclesBloc.state.listen(_onVehiclesUpdate);
   }
 
@@ -56,12 +55,9 @@ class VehicleBloc extends Bloc<VehicleAction, VehicleState> {
 
   @override
   void dispose() {
-    super.dispose();
-    print('disposing vehicle bloc $vehicleId');
     _subscription.cancel();
+    super.dispose();
   }
-
-
 }
 
 @immutable
