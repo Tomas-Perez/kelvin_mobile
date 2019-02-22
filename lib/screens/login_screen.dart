@@ -1,13 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
+import 'package:kelvin_mobile/errors/errors.dart';
+import 'package:kelvin_mobile/screens/settings_screen.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Iniciar sesión'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => _pushSettingsScreen(context),
+            tooltip: 'Ajustes',
+            icon: Icon(Icons.settings),
+          )
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -15,8 +30,45 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             _logoHeader(),
             InputForm(),
+            _feedback(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Center _feedback(BuildContext context) {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(top: 80.0),
+        child: BlocBuilder<AuthAction, AuthState>(
+          bloc: BlocProvider.of<AuthBloc>(context),
+          builder: (context, state) {
+            if (state.loading) {
+              return CircularProgressIndicator();
+            } else if (state.hasError) {
+              switch (state.errorMessage) {
+                case AuthErrors.notAdmin:
+                  return Text(Errors.appNotAvailable);
+                case AuthErrors.noConnection:
+                  return Text(Errors.noConnection);
+                default:
+                  return Text(Errors.generic);
+              }
+            } else {
+              return Container();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void _pushSettingsScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (c) => SettingsScreen(),
       ),
     );
   }
@@ -53,6 +105,7 @@ class InputFormState extends State<InputForm> {
   final _usernameFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final loginInfo = LoginInfo.empty();
+  StreamSubscription _subscription;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +152,7 @@ class InputFormState extends State<InputForm> {
       focusNode: _passwordFocus,
       validator: (value) {
         if (value.isEmpty) {
-          return 'No puedee ser vacío';
+          return 'No puede ser vacío';
         }
       },
       onFieldSubmitted: (term) {
@@ -112,6 +165,8 @@ class InputFormState extends State<InputForm> {
   }
 
   Widget _submitButton() {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
@@ -121,13 +176,26 @@ class InputFormState extends State<InputForm> {
         onPressed: () {
           if (_formKey.currentState.validate()) {
             _formKey.currentState.save();
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content:
-                    Text('${loginInfo.username} / ${loginInfo.password}')));
+            authBloc.login(loginInfo);
           }
         },
         child: Text('Iniciar sesión'),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    super.initState();
+    _subscription = authBloc.state
+        .where((state) => state.authorized)
+        .listen((_) => _formKey.currentState.reset());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription.cancel();
   }
 }

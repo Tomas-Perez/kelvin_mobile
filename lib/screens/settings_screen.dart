@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -11,8 +12,35 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: InputForm(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            InputForm(),
+            _logoutButton(context),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _logoutButton(BuildContext context) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    return BlocBuilder<AuthAction, AuthState>(
+      bloc: authBloc,
+      builder: (context, state) {
+        if (state.authorized) {
+          return RaisedButton(
+            child: const Text('Cerrar Sesión'),
+            onPressed: () {
+              authBloc.logout();
+              Navigator.of(context).pop();
+            },
+            color: Theme.of(context).errorColor,
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }

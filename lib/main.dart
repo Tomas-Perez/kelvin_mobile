@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/auth_guard.dart';
+import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/screens/home_screen.dart';
+import 'package:kelvin_mobile/screens/login_screen.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
+import 'package:kelvin_mobile/services/auth_service.dart';
 import 'package:kelvin_mobile/services/connection_service.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
@@ -24,7 +28,10 @@ class MyApp extends StatelessWidget {
       app: MaterialApp(
         theme: ThemeData.light(),
         title: 'Kelvin',
-        home: const HomeScreen(),
+        home: AuthGuard(
+          homeScreen: const HomeScreen(),
+          login: const LoginScreen(),
+        ),
       ),
     );
   }
@@ -32,27 +39,38 @@ class MyApp extends StatelessWidget {
   Widget _provideServices({Widget app}) {
     final vehicleService = MockVehicleService();
     final deviceService = MockDeviceService();
+    final connectionBloc = ApiConnectionBloc(
+      initialUrl: '192.168.1.45:8080',
+      connectionService: MockConnectionService(delay: Duration(seconds: 5)),
+    );
 
     return provideAll(
+      child: app,
       builders: [
         (c) {
           return BlocProvider<ApiConnectionBloc>(
-            bloc: ApiConnectionBloc(
-              initialUrl: 'localhost:8080',
-              connectionService: MockConnectionService(500),
+            bloc: connectionBloc,
+            child: c,
+          );
+        },
+        (c) {
+          return BlocProvider<AuthBloc>(
+            bloc: AuthBloc(
+              MockAuthService(delay: Duration(seconds: 2)),
+              connectionBloc,
             ),
             child: c,
           );
         },
         (c) {
           return BlocProvider<VehiclesBloc>(
-            bloc: VehiclesBloc(MockVehicleService())..load(),
+            bloc: VehiclesBloc(MockVehicleService()),
             child: c,
           );
         },
         (c) {
           return BlocProvider<DevicesBloc>(
-            bloc: DevicesBloc(MockDeviceService())..load(),
+            bloc: DevicesBloc(MockDeviceService()),
             child: c,
           );
         },
@@ -79,7 +97,6 @@ class MyApp extends StatelessWidget {
           );
         },
       ],
-      child: app,
     );
   }
 }

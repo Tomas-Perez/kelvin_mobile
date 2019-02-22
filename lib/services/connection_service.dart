@@ -1,15 +1,16 @@
+import 'package:kelvin_mobile/services/delayed_service.dart';
+
 abstract class ApiConnectionService {
-  Future checkConnection(String url);
+  Future<void> checkConnection(String url);
 }
 
-class MockConnectionService implements ApiConnectionService{
-  final num delay;
+class MockConnectionService extends DelayedService implements ApiConnectionService {
 
-  MockConnectionService(this.delay);
+  MockConnectionService({Duration delay}) : super (delay: delay);
 
   @override
-  Future checkConnection(String url) async {
-    return Future.delayed(Duration(milliseconds: delay), () => {});
+  Future<void> checkConnection(String url) async {
+    return withDelay(null);
   }
 
 }

@@ -1,5 +1,6 @@
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
+import 'package:kelvin_mobile/services/delayed_service.dart';
 
 abstract class VehicleService {
   Future<Vehicle> getById(String id);
@@ -7,18 +8,14 @@ abstract class VehicleService {
   Future<List<Vehicle>> getAll();
 }
 
-class MockVehicleService implements VehicleService {
-  final num delay;
+class MockVehicleService extends DelayedService implements VehicleService {
 
-  const MockVehicleService({this.delay = 0});
+  MockVehicleService({Duration delay}) : super(delay: delay);
 
   @override
   Future<Vehicle> getById(String id) =>
-      _withDelay(vehicles.firstWhere((v) => v.id == id, orElse: () => null));
+      withDelay(vehicles.firstWhere((v) => v.id == id, orElse: () => null));
 
   @override
-  Future<List<Vehicle>> getAll() => _withDelay(vehicles);
-
-  Future<T> _withDelay<T>(T value) =>
-      Future.delayed(Duration(milliseconds: delay), () => value);
+  Future<List<Vehicle>> getAll() => withDelay(vehicles);
 }

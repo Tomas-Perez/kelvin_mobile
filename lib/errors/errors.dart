@@ -12,10 +12,12 @@ class Errors {
     Scaffold.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  static const generic = 'Ocurrio un problema';
+  static const generic = 'Ha ocurrido un error';
   static const invalidCode = 'Código inválido';
   static const notAVehicle = 'El código no pertenece a un vehículo';
   static const notADevice = 'El código no pertenece a un dispositivo';
   static const vehicleNotFound = 'El vehículo no existe';
   static const deviceNotFound = 'El dispositivo no existe';
+  static const appNotAvailable = 'Kelvin Mobile no esta disponible para su cuenta';
+  static const noConnection = 'No hay conexión';
 }

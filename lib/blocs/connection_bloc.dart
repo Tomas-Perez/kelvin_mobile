@@ -16,6 +16,8 @@ class ApiConnectionBloc extends Bloc<ApiConnectionAction, ApiConnectionState> {
 
   updateUrl(String url) => dispatch(UpdateConnection(url));
 
+  checkConnection() => dispatch(UpdateConnection(currentState.url));
+
   _checkConnection() async {
     try {
       await connectionService.checkConnection(currentState.url);
@@ -65,8 +67,11 @@ class ApiConnectionState {
   final bool loading;
   final bool connected;
 
-  ApiConnectionState._(
-      {this.url, this.loading = false, this.connected = false});
+  ApiConnectionState._({
+    this.url,
+    this.loading = false,
+    this.connected = false,
+  });
 
   factory ApiConnectionState.from(String url) {
     return ApiConnectionState._(url: url, loading: true);

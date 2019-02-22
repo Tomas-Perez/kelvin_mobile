@@ -1,7 +1,12 @@
 class User {
   final String id, username, name, lastName;
+  final UserType userType;
 
-  User({this.id, this.username, this.name, this.lastName});
+  User({this.id, this.username, this.name, this.lastName, this.userType});
+}
+
+enum UserType {
+  admin, client
 }
 
 class LoginInfo {
@@ -10,6 +15,11 @@ class LoginInfo {
   LoginInfo({this.username, this.password});
 
   LoginInfo.empty();
+
+  @override
+  String toString() {
+    return '$username, $password';
+  }
 }
 
 class Device {

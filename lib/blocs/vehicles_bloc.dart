@@ -6,7 +6,9 @@ import 'package:meta/meta.dart';
 class VehiclesBloc extends Bloc<VehiclesAction, VehiclesState> {
   final VehicleService _vehicleService;
 
-  VehiclesBloc(this._vehicleService);
+  VehiclesBloc(this._vehicleService) {
+    load();
+  }
 
   void load() => dispatch(const LoadVehicles());
 
@@ -27,7 +29,7 @@ class VehiclesBloc extends Bloc<VehiclesAction, VehiclesState> {
         yield VehiclesState.from(vehicles);
       } catch (e) {
         final message = 'Error getting all vehicles';
-        print(message);
+        print(e);
         yield currentState.setError(message);
       }
     } else {

@@ -6,7 +6,9 @@ import 'package:meta/meta.dart';
 class DevicesBloc extends Bloc<DevicesAction, DevicesState> {
   final DeviceService _deviceService;
 
-  DevicesBloc(this._deviceService);
+  DevicesBloc(this._deviceService) {
+    load();
+  }
 
   void load() => dispatch(const LoadDevices());
 
@@ -25,7 +27,7 @@ class DevicesBloc extends Bloc<DevicesAction, DevicesState> {
         yield DevicesState.from(devices);
       } catch (e) {
         final message = 'Error getting all devices';
-        print(message);
+        print(e);
         yield currentState.setError(message);
       }
     } else {
