@@ -36,14 +36,14 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _provideServices({Widget app}) {
-    final vehicleService = MockVehicleService();
-    final deviceService = MockDeviceService();
+    final vehicleService = HttpVehicleService();
+    final deviceService = HttpDeviceService();
     final connectionBloc = ApiConnectionBloc(
-      initialUrl: '192.168.1.45:8080',
-      connectionService: MockConnectionService(delay: Duration(seconds: 5)),
+      initialUrl: 'http://192.168.1.45:8080',
+      connectionService: HttpConnectionService(),
     );
     final authBloc = AuthBloc(
-      MockAuthService(delay: Duration(seconds: 2)),
+      HttpAuthService(),
       connectionBloc,
     );
 
@@ -77,10 +77,7 @@ class MyApp extends StatelessWidget {
         (c) {
           return ServiceProvider<AssignmentService>(
             child: c,
-            service: MockAssignmentService(
-              deviceService: deviceService,
-              vehicleService: vehicleService,
-            ),
+            service: HttpAssignmentService(),
           );
         },
         (c) {

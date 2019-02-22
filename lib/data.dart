@@ -3,6 +3,16 @@ class User {
   final UserType userType;
 
   User({this.id, this.username, this.name, this.lastName, this.userType});
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      username: json['username'],
+      name: json['name'],
+      lastName: json['lastName'],
+      userType: json['type'] == 'ADMIN' ? UserType.admin : UserType.client,
+    );
+  }
 }
 
 enum UserType { admin, client }
@@ -24,6 +34,14 @@ class Device {
   final String id, mac, alias;
 
   Device({this.id, this.mac, this.alias});
+
+  factory Device.fromJson(Map<String, dynamic> json) {
+    return Device(
+      id: json['id'],
+      mac: json['mac'],
+      alias: json['alias'],
+    );
+  }
 }
 
 class Vehicle {
@@ -62,6 +80,18 @@ class VehicleModel {
       this.model,
       this.brand,
       this.deviceId});
+
+  factory VehicleModel.fromJson(Map<String, dynamic> json) {
+    return VehicleModel(
+      id: json['id'],
+      ownerId: json['ownerId'],
+      domain: json['domain'],
+      wheels: json['wheels'],
+      model: json['model'],
+      brand: json['brand'],
+      deviceId: json['deviceId'],
+    );
+  }
 }
 
 class AssignedPair {

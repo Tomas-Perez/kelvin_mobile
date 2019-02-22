@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/auth_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/screens/settings_screen.dart';
@@ -52,6 +53,8 @@ class LoginScreen extends StatelessWidget {
                   return Text(Errors.appNotAvailable);
                 case AuthErrors.noConnection:
                   return Text(Errors.noConnection);
+                case AuthErrors.invalidCredentials:
+                  return Text(Errors.invalidCredentials);
                 default:
                   return Text(Errors.generic);
               }

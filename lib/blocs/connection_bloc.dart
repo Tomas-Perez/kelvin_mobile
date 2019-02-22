@@ -23,6 +23,7 @@ class ApiConnectionBloc extends Bloc<ApiConnectionAction, ApiConnectionState> {
       await connectionService.checkConnection(currentState.url);
       dispatch(Connected());
     } catch (e) {
+      print(e.message);
       dispatch(Disconnected());
     }
   }

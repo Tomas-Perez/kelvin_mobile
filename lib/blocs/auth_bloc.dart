@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/services/auth_service.dart';
+import 'package:kelvin_mobile/services/errors.dart' as serviceErrors;
 import 'package:meta/meta.dart';
 
 class AuthBloc extends Bloc<AuthAction, AuthState> {
@@ -25,7 +27,7 @@ class AuthBloc extends Bloc<AuthAction, AuthState> {
       dispatch(LoginResponse(token));
     } catch (e) {
       print(e);
-      dispatch(LoginError(e));
+      dispatch(LoginError(e.message));
     }
   }
 
@@ -42,7 +44,7 @@ class AuthBloc extends Bloc<AuthAction, AuthState> {
       }
     } catch (e) {
       print(e);
-      dispatch(LoginError(e));
+      dispatch(LoginError(e.message));
     }
   }
 
@@ -55,9 +57,12 @@ class AuthBloc extends Bloc<AuthAction, AuthState> {
       } else {
         dispatch(LoginError(AuthErrors.noConnection));
       }
+    } on serviceErrors.InvalidCredentialsException {
+      print(AuthErrors.invalidCredentials);
+      dispatch(LoginError(AuthErrors.invalidCredentials));
     } catch (e) {
       print(e);
-      dispatch(LoginError(e));
+      dispatch(LoginError(e.message));
     }
   }
 
@@ -155,36 +160,4 @@ class AuthState {
       errorMessage: message,
     );
   }
-}
-
-class AuthErrors {
-  AuthErrors._();
-
-  static const noConnection = 'NO_CONNECTION';
-  static const notAdmin = 'NOT_ADMIN';
-  static const unauthorized = 'UNATHORIZED';
-}
-
-class AuthException implements Exception {
-  final String message;
-
-  const AuthException(this.message);
-}
-
-class NoConnectionException implements AuthException {
-  final String message = AuthErrors.noConnection;
-
-  const NoConnectionException();
-}
-
-class NotAdminException implements AuthException {
-  final String message = AuthErrors.notAdmin;
-
-  const NotAdminException();
-}
-
-class UnauthorizedException implements AuthException {
-  final String message = AuthErrors.unauthorized;
-
-  const UnauthorizedException();
 }

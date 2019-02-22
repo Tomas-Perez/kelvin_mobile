@@ -18,8 +18,11 @@ class Errors {
   static const notADevice = 'El código no pertenece a un dispositivo';
   static const vehicleNotFound = 'El vehículo no existe';
   static const deviceNotFound = 'El dispositivo no existe';
-  static const appNotAvailable = 'Kelvin Mobile no esta disponible para su cuenta';
+  static const appNotAvailable =
+      'Kelvin Mobile no esta disponible para su cuenta';
   static const noConnection = 'No hay conexión';
   static const noDevices = 'No hay dispositivos';
   static const noVehicles = 'No hay vehículos';
+  static const invalidCredentials =
+      'Los datos ingresados no coinciden con ningún usuario';
 }
