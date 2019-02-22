@@ -12,9 +12,9 @@ class AuthBloc extends Bloc<AuthAction, AuthState> {
 
   AuthBloc(this._authService, this._connectionBloc);
 
-  login(LoginInfo loginInfo) => dispatch(Login(loginInfo));
+  void login(LoginInfo loginInfo) => dispatch(Login(loginInfo));
 
-  logout() => dispatch(Logout());
+  void logout() => dispatch(Logout());
 
   void _loginRequest(LoginInfo loginInfo) async {
     try {
@@ -46,7 +46,7 @@ class AuthBloc extends Bloc<AuthAction, AuthState> {
     }
   }
 
-  _checkConnection(void then()) async {
+  void _checkConnection(void then()) async {
     try {
       final connectionState =
           await _connectionBloc.state.firstWhere((state) => !state.loading);
@@ -162,4 +162,29 @@ class AuthErrors {
 
   static const noConnection = 'NO_CONNECTION';
   static const notAdmin = 'NOT_ADMIN';
+  static const unauthorized = 'UNATHORIZED';
+}
+
+class AuthException implements Exception {
+  final String message;
+
+  const AuthException(this.message);
+}
+
+class NoConnectionException implements AuthException {
+  final String message = AuthErrors.noConnection;
+
+  const NoConnectionException();
+}
+
+class NotAdminException implements AuthException {
+  final String message = AuthErrors.notAdmin;
+
+  const NotAdminException();
+}
+
+class UnauthorizedException implements AuthException {
+  final String message = AuthErrors.unauthorized;
+
+  const UnauthorizedException();
 }

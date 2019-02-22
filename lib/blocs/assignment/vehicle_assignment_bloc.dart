@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:kelvin_mobile/blocs/assignment/assignment_action.dart';
 import 'package:kelvin_mobile/blocs/assignment/assignment_state.dart';
+import 'package:kelvin_mobile/blocs/auth_bloc.dart';
+import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
@@ -13,6 +15,8 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
   final DevicesBloc devicesBloc;
   final VehiclesBloc vehiclesBloc;
   final AssignmentService assignmentService;
+  final ApiConnectionBloc connectionBloc;
+  final AuthBloc authBloc;
   final String vehicleId;
   final List<StreamSubscription> _subscriptions = [];
 
@@ -20,7 +24,9 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
     @required this.devicesBloc,
     @required this.vehiclesBloc,
     @required this.assignmentService,
-    this.vehicleId,
+    @required this.connectionBloc,
+    @required this.authBloc,
+    @required this.vehicleId,
   }) {
     // ignore: cancel_subscriptions
     final vehiclesSubs = vehiclesBloc.state.listen(_onVehiclesUpdate);
@@ -35,9 +41,15 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
     _subscriptions.addAll([vehiclesSubs, devicesSubs]);
   }
 
-  Future assignDevice(Device device) async {
+  Future<void> assignDevice(Device device) async {
     try {
-      await assignmentService.assign(currentState.pair.vehicle, device);
+      await _checkAuth();
+      await assignmentService.assign(
+        currentState.pair.vehicle,
+        device,
+        url: connectionBloc.currentState.url,
+        token: authBloc.currentState.token,
+      );
       devicesBloc.load();
       vehiclesBloc.load();
     } catch (e) {
@@ -46,14 +58,32 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
     }
   }
 
-  Future unassign() async {
+  Future<void> unassign() async {
     try {
-      await assignmentService.unassign(currentState.pair);
+      await _checkAuth();
+      await assignmentService.unassign(
+        currentState.pair,
+        url: connectionBloc.currentState.url,
+        token: authBloc.currentState.token,
+      );
       devicesBloc.load();
       vehiclesBloc.load();
     } catch (e) {
       print(e);
       throw e;
+    }
+  }
+
+  Future<void> _checkAuth() async {
+    final connectionState =
+        await connectionBloc.state.firstWhere((state) => !state.loading);
+    if (!connectionState.connected) {
+      throw NoConnectionException();
+    }
+    final authState =
+        await authBloc.state.firstWhere((state) => !state.loading);
+    if (!authState.authorized) {
+      throw UnauthorizedException();
     }
   }
 

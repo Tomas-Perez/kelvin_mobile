@@ -7,18 +7,18 @@ class ApiConnectionBloc extends Bloc<ApiConnectionAction, ApiConnectionState> {
   final ApiConnectionService connectionService;
 
   ApiConnectionBloc({this.initialUrl, this.connectionService}) {
-    _checkConnection();
+    checkConnection();
   }
 
   @override
   ApiConnectionState get initialState =>
       ApiConnectionState.from(this.initialUrl);
 
-  updateUrl(String url) => dispatch(UpdateConnection(url));
+  void updateUrl(String url) => dispatch(UpdateConnection(url));
 
-  checkConnection() => dispatch(UpdateConnection(currentState.url));
+  void checkConnection() => dispatch(UpdateConnection(currentState.url));
 
-  _checkConnection() async {
+  void _checkConnection() async {
     try {
       await connectionService.checkConnection(currentState.url);
       dispatch(Connected());

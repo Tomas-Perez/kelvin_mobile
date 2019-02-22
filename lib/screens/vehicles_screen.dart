@@ -67,7 +67,7 @@ class VehiclesScreen extends StatelessWidget {
     );
   }
 
-  Future _onRefresh(BuildContext context) async {
+  Future<void> _onRefresh(BuildContext context) async {
     final bloc = BlocProvider.of<VehiclesBloc>(context);
     bloc.load();
     var alreadyLoading = false;

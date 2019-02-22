@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Future _scan(BuildContext context) async {
+  Future<void> _scan(BuildContext context) async {
     try {
       final barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  _onScannedDevice(String id, BuildContext context) {
+  void _onScannedDevice(String id, BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  _onScannedVehicle(String id, BuildContext context) {
+  void _onScannedVehicle(String id, BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(

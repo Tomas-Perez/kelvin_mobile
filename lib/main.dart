@@ -43,6 +43,10 @@ class MyApp extends StatelessWidget {
       initialUrl: '192.168.1.45:8080',
       connectionService: MockConnectionService(delay: Duration(seconds: 5)),
     );
+    final authBloc = AuthBloc(
+      MockAuthService(delay: Duration(seconds: 2)),
+      connectionBloc,
+    );
 
     return provideAll(
       child: app,
@@ -55,22 +59,19 @@ class MyApp extends StatelessWidget {
         },
         (c) {
           return BlocProvider<AuthBloc>(
-            bloc: AuthBloc(
-              MockAuthService(delay: Duration(seconds: 2)),
-              connectionBloc,
-            ),
+            bloc: authBloc,
             child: c,
           );
         },
         (c) {
           return BlocProvider<VehiclesBloc>(
-            bloc: VehiclesBloc(MockVehicleService()),
+            bloc: VehiclesBloc(vehicleService, connectionBloc, authBloc),
             child: c,
           );
         },
         (c) {
           return BlocProvider<DevicesBloc>(
-            bloc: DevicesBloc(MockDeviceService()),
+            bloc: DevicesBloc(deviceService, connectionBloc, authBloc),
             child: c,
           );
         },

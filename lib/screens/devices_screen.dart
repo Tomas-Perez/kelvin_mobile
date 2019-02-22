@@ -68,7 +68,7 @@ class DevicesScreen extends StatelessWidget {
     );
   }
 
-  Future _onRefresh(BuildContext context) async {
+  Future<void> _onRefresh(BuildContext context) async {
     final bloc = BlocProvider.of<DevicesBloc>(context);
     bloc.load();
     var alreadyLoading = false;

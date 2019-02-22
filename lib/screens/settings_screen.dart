@@ -76,39 +76,41 @@ class InputFormState extends State<InputForm> {
 
     return BlocBuilder<ApiConnectionAction, ApiConnectionState>(
       bloc: connectionBloc,
-      builder: (context, state) => Row(
-            children: <Widget>[
-              Flexible(
-                child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  initialValue: state.url,
-                  focusNode: _urlFocus,
-                  decoration: InputDecoration(
-                      labelText: 'URL',
-                      icon: Container(
-                        width: 20,
-                        height: 20,
-                        child: _connectionIcon(state, context),
-                      )),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'No puede ser vacío';
-                    }
-                  },
-                  onFieldSubmitted: (term) {
-                    _urlFocus.unfocus();
-                  },
-                  onSaved: (url) {
-                    connectionBloc.updateUrl(url);
-                  },
-                ),
+      builder: (context, state) {
+        return Row(
+          children: <Widget>[
+            Flexible(
+              child: TextFormField(
+                textInputAction: TextInputAction.next,
+                initialValue: state.url,
+                focusNode: _urlFocus,
+                decoration: InputDecoration(
+                    labelText: 'URL',
+                    icon: Container(
+                      width: 20,
+                      height: 20,
+                      child: _connectionIcon(state, context),
+                    )),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'No puede ser vacío';
+                  }
+                },
+                onFieldSubmitted: (term) {
+                  _urlFocus.unfocus();
+                },
+                onSaved: (url) {
+                  connectionBloc.updateUrl(url);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  _connectionIcon(ApiConnectionState state, BuildContext context) {
+  Widget _connectionIcon(ApiConnectionState state, BuildContext context) {
     if (state.loading)
       return CircularProgressIndicator(strokeWidth: 2);
     else {

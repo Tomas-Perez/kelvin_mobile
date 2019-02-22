@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/assignment/assignment.dart';
-import 'package:kelvin_mobile/blocs/assignment/vehicle_assignment_bloc.dart';
+import 'package:kelvin_mobile/blocs/auth_bloc.dart';
+import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/device_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
@@ -86,7 +87,7 @@ class VehicleScreenState extends State<VehicleScreen> {
     );
   }
 
-  _unassignDialog() async {
+  void _unassignDialog() async {
     final unassign = await showConfirmationDialog(
       '¿Está seguro que desea desasignar el vehículo?',
       context,
@@ -120,7 +121,7 @@ class VehicleScreenState extends State<VehicleScreen> {
     );
   }
 
-  Future _scan(BuildContext context) async {
+  Future<void> _scan(BuildContext context) async {
     try {
       String barcode = await ServiceProvider.of<ScannerService>(context).scan();
       final info = ServiceProvider.of<LinkParser>(context).parse(barcode);
@@ -138,7 +139,7 @@ class VehicleScreenState extends State<VehicleScreen> {
     }
   }
 
-  _assignDevice(String id, BuildContext context) async {
+  void _assignDevice(String id, BuildContext context) async {
     final deviceBloc = DeviceBloc(
       BlocProvider.of<DevicesBloc>(context),
       id,
@@ -179,7 +180,7 @@ class VehicleScreenState extends State<VehicleScreen> {
     }
   }
 
-  Future _pushDeviceScreen(AssignedPair pair, BuildContext context) async {
+  Future<void> _pushDeviceScreen(AssignedPair pair, BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -196,6 +197,8 @@ class VehicleScreenState extends State<VehicleScreen> {
       devicesBloc: BlocProvider.of<DevicesBloc>(context),
       vehiclesBloc: BlocProvider.of<VehiclesBloc>(context),
       assignmentService: ServiceProvider.of<AssignmentService>(context),
+      authBloc: BlocProvider.of<AuthBloc>(context),
+      connectionBloc: BlocProvider.of<ApiConnectionBloc>(context),
       vehicleId: widget.vehicleId,
     );
   }

@@ -3,15 +3,16 @@ import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/mock/vehicles.dart';
 import 'package:kelvin_mobile/services/device_service.dart';
 import 'package:kelvin_mobile/services/vehicle_service.dart';
+import 'package:meta/meta.dart';
 
 abstract class AssignmentService {
-  Future<AssignedPair> getVehiclePair(Vehicle vehicle);
+  Future<AssignedPair> getVehiclePair(Vehicle vehicle, {@required String url, @required String token});
 
-  Future<AssignedPair> getDevicePair(Device device);
+  Future<AssignedPair> getDevicePair(Device device, {@required String url, @required String token});
 
-  Future assign(Vehicle vehicle, Device device);
+  Future<void> assign(Vehicle vehicle, Device device, {@required String url, @required String token});
 
-  Future unassign(AssignedPair pair);
+  Future<void> unassign(AssignedPair pair, {@required String url, @required String token});
 }
 
 class MockAssignmentService implements AssignmentService {
@@ -21,12 +22,12 @@ class MockAssignmentService implements AssignmentService {
   const MockAssignmentService({this.vehicleService, this.deviceService});
 
   @override
-  Future<AssignedPair> getVehiclePair(Vehicle vehicle) async {
+  Future<AssignedPair> getVehiclePair(Vehicle vehicle, {@required String url, @required String token}) async {
     if (vehicle.deviceId == null)
       return AssignedPair(vehicle: vehicle, device: null);
 
     try {
-      final device = await deviceService.getById(vehicle.deviceId);
+      final device = await deviceService.getById(vehicle.deviceId, url: url, token: token);
       return AssignedPair(vehicle: vehicle, device: device);
     } catch (e) {
       print(e);
@@ -35,15 +36,15 @@ class MockAssignmentService implements AssignmentService {
   }
 
   @override
-  Future<AssignedPair> getDevicePair(Device device) async {
-    final vehicles = await vehicleService.getAll();
+  Future<AssignedPair> getDevicePair(Device device, {@required String url, @required String token}) async {
+    final vehicles = await vehicleService.getAll(url: url, token: token);
     final vehicle =
         vehicles.firstWhere((v) => v.deviceId == device.id, orElse: () => null);
     return AssignedPair(vehicle: vehicle, device: device);
   }
 
   @override
-  Future assign(Vehicle vehicle, Device device) async {
+  Future<void> assign(Vehicle vehicle, Device device, {@required String url, @required String token}) async {
     final foundVehicle =
         vehicles.firstWhere((v) => v.id == vehicle.id, orElse: () => null);
 
@@ -73,7 +74,7 @@ class MockAssignmentService implements AssignmentService {
   }
 
   @override
-  Future unassign(AssignedPair pair) async {
+  Future<void> unassign(AssignedPair pair, {@required String url, @required String token}) async {
     Vehicle foundVehicle;
 
     if (pair.vehicle != null) {
