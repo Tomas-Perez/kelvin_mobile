@@ -4,10 +4,11 @@ import 'package:kelvin_mobile/blocs/assignment/assignment.dart';
 import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicle_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
-import 'package:kelvin_mobile/errors/errors.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
@@ -42,7 +43,14 @@ class DeviceScreenState extends State<DeviceScreen> {
           return _loadingScreen();
         }
         if (state.hasError) {
-          throw Exception(state.errorMessage);
+          String message = Errors.generic;
+
+          switch (state.errorMessage) {
+            case DeviceErrors.deviceNotFound:
+              message = Errors.deviceNotFound;
+          }
+
+          return _errorScreen(message);
         }
 
         return _resultScreen(
@@ -59,6 +67,10 @@ class DeviceScreenState extends State<DeviceScreen> {
 
   Widget _emptyScreen() {
     return _scaffold(Container());
+  }
+
+  Widget _errorScreen(String message) {
+    return _scaffold(Center(child: Text(message)));
   }
 
   Widget _resultScreen({
@@ -126,7 +138,8 @@ class DeviceScreenState extends State<DeviceScreen> {
     );
   }
 
-  Future<void> _pushVehicleScreen(AssignedPair pair, BuildContext context) async {
+  Future<void> _pushVehicleScreen(
+      AssignedPair pair, BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -144,6 +157,10 @@ class DeviceScreenState extends State<DeviceScreen> {
       } else {
         Errors.show(context, message: Errors.notAVehicle);
       }
+    } on BackButtonException catch (e) {
+      print(e);
+    } on AccessDeniedException catch (e) {
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.notAVehicle);
     } on FormatException catch (e) {
@@ -199,7 +216,6 @@ class DeviceScreenState extends State<DeviceScreen> {
     super.dispose();
     _assignmentBloc.dispose();
   }
-
 
   @override
   void didChangeDependencies() {

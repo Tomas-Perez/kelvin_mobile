@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
-import 'package:kelvin_mobile/errors/errors.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/screens/settings_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -147,6 +147,7 @@ class InputFormState extends State<InputForm> {
 
   TextFormField _passwordField() {
     return TextFormField(
+      textInputAction: TextInputAction.done,
       decoration: InputDecoration(labelText: 'Contraseña'),
       obscureText: true,
       focusNode: _passwordFocus,
@@ -155,9 +156,7 @@ class InputFormState extends State<InputForm> {
           return 'No puede ser vacío';
         }
       },
-      onFieldSubmitted: (term) {
-        _passwordFocus.unfocus();
-      },
+      onFieldSubmitted: (_) => _submit(),
       onSaved: (password) {
         loginInfo.password = password;
       },
@@ -165,23 +164,26 @@ class InputFormState extends State<InputForm> {
   }
 
   Widget _submitButton() {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
         color: Colors.blue,
         textColor: Colors.white,
         splashColor: Colors.blueGrey,
-        onPressed: () {
-          if (_formKey.currentState.validate()) {
-            _formKey.currentState.save();
-            authBloc.login(loginInfo);
-          }
-        },
+        onPressed: _submit,
         child: Text('Iniciar sesión'),
       ),
     );
+  }
+
+  void _submit() {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    if (_formKey.currentState.validate()) {
+      _passwordFocus.unfocus();
+      _usernameFocus.unfocus();
+      _formKey.currentState.save();
+      authBloc.login(loginInfo);
+    }
   }
 
   @override
@@ -195,6 +197,7 @@ class InputFormState extends State<InputForm> {
 
   @override
   void dispose() {
+    print('disposing login');
     super.dispose();
     _subscription.cancel();
   }

@@ -5,10 +5,11 @@ import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/device_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
-import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
 import 'package:kelvin_mobile/services/link_parser.dart';
 import 'package:kelvin_mobile/services/scanner_service.dart';
@@ -42,7 +43,14 @@ class VehicleScreenState extends State<VehicleScreen> {
           return _loadingScreen();
         }
         if (state.hasError) {
-          throw Exception(state.errorMessage);
+          String message = Errors.generic;
+
+          switch (state.errorMessage) {
+            case VehicleErrors.vehicleNotFound:
+              message = Errors.vehicleNotFound;
+          }
+
+          return _errorScreen(message);
         }
         return _resultScreen(
           pair: state.pair,
@@ -52,9 +60,12 @@ class VehicleScreenState extends State<VehicleScreen> {
     );
   }
 
-  Widget _loadingScreen() {
-    return _scaffold(const Loading());
-  }
+  Widget _loadingScreen() => _scaffold(const Loading());
+
+  Widget _emptyScreen() => _scaffold(Container());
+
+  Widget _errorScreen(String message) =>
+      _scaffold(Center(child: Text(message)));
 
   Widget _resultScreen({
     @required AssignedPair pair,
@@ -130,6 +141,10 @@ class VehicleScreenState extends State<VehicleScreen> {
       } else {
         Errors.show(context, message: Errors.notADevice);
       }
+    } on BackButtonException catch (e) {
+      print(e);
+    } on AccessDeniedException catch (e) {
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.notADevice);
     } on FormatException catch (e) {
@@ -180,7 +195,8 @@ class VehicleScreenState extends State<VehicleScreen> {
     }
   }
 
-  Future<void> _pushDeviceScreen(AssignedPair pair, BuildContext context) async {
+  Future<void> _pushDeviceScreen(
+      AssignedPair pair, BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -188,7 +204,6 @@ class VehicleScreenState extends State<VehicleScreen> {
       ),
     );
   }
-
 
   @override
   void didChangeDependencies() {
@@ -208,6 +223,4 @@ class VehicleScreenState extends State<VehicleScreen> {
     super.dispose();
     _assignmentBloc.dispose();
   }
-
-  Widget _emptyScreen() => Container();
 }

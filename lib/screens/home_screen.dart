@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:kelvin_mobile/errors/errors.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/devices_screen.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/screens/settings_screen.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/screens/vehicles_screen.dart';
@@ -69,12 +69,16 @@ class HomeScreen extends StatelessWidget {
           _onScannedVehicle(info.id, context);
           break;
       }
+    } on BackButtonException catch (e) {
+      print(e);
+    } on AccessDeniedException catch (e) {
+      Errors.show(context, exc: e, message: Errors.invalidCode);
     } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.invalidCode);
     } on FormatException catch (e) {
       Errors.show(context, exc: e, message: Errors.invalidCode);
     } catch (e) {
-      print('Error: $e');
+      Errors.show(context, exc: e);
     }
   }
 

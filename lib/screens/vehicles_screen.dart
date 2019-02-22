@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/screens/vehicle_screen.dart';
 import 'package:kelvin_mobile/utils/funcs.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
@@ -20,7 +21,10 @@ class VehiclesScreen extends StatelessWidget {
           return _loadingScreen();
         }
         if (state.hasError) {
-          throw Exception(state.errorMessage);
+          return _errorScreen(Errors.generic);
+        }
+        if (state.vehicles.isEmpty) {
+          return _errorScreen(Errors.noVehicles);
         }
         return _resultScreen(state.vehicles);
       },
@@ -33,6 +37,15 @@ class VehiclesScreen extends StatelessWidget {
         title: const Text('Vehículos'),
       ),
       body: Loading(),
+    );
+  }
+
+  Widget _errorScreen(String message) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Vehículos'),
+      ),
+      body: Center(child: Text(message)),
     );
   }
 

@@ -2,7 +2,7 @@ import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/mock/devices.dart';
 
 final vehicles = [
-  Vehicle(
+  VehicleModel(
     id: '123918223',
     ownerId: '1231242',
     domain: 'AAA-233',
@@ -11,7 +11,7 @@ final vehicles = [
     brand: 'Chevrolet',
     deviceId: null,
   ),
-  Vehicle(
+  VehicleModel(
     id: '2131243294',
     ownerId: '1231242',
     domain: 'BBB-231',
@@ -20,7 +20,7 @@ final vehicles = [
     brand: 'Zanella',
     deviceId: devices[0].id,
   ),
-  Vehicle(
+  VehicleModel(
     id: '232096570',
     ownerId: '2381290',
     domain: 'AZ-232-RE',
@@ -29,7 +29,7 @@ final vehicles = [
     brand: 'Scania',
     deviceId: devices[1].id,
   ),
-  Vehicle(
+  VehicleModel(
     id: '2394023043',
     ownerId: '2381290',
     domain: 'DS-231-AZ',
@@ -38,7 +38,7 @@ final vehicles = [
     brand: 'Mercedes-Benz',
     deviceId: devices[2].id,
   ),
-  Vehicle(
+  VehicleModel(
     id: '12039059340',
     ownerId: '2381290',
     domain: 'BXZ-832',

@@ -6,6 +6,7 @@ import 'package:kelvin_mobile/blocs/assignment/assignment_state.dart';
 import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
@@ -97,8 +98,6 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
       return;
     }
 
-    print('on vehicles update device id');
-    print(currentState.pair.vehicle);
     final device = devicesState.devices.firstWhere(
       (d) => d.id == currentState.pair.vehicle.deviceId,
       orElse: () => null,
@@ -122,8 +121,8 @@ class VehicleAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
       dispatch(VehicleUpdate(vehicle));
     } catch (e) {
       print(e);
-      print('Vehicle not found');
-      dispatch(const AssignmentError('Vehicle not found'));
+      print(VehicleErrors.vehicleNotFound);
+      dispatch(const AssignmentError(VehicleErrors.vehicleNotFound));
     }
   }
 

@@ -20,4 +20,6 @@ class Errors {
   static const deviceNotFound = 'El dispositivo no existe';
   static const appNotAvailable = 'Kelvin Mobile no esta disponible para su cuenta';
   static const noConnection = 'No hay conexión';
+  static const noDevices = 'No hay dispositivos';
+  static const noVehicles = 'No hay vehículos';
 }

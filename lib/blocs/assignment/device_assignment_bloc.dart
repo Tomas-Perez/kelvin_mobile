@@ -6,6 +6,7 @@ import 'package:kelvin_mobile/blocs/assignment/assignment_state.dart';
 import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
@@ -104,8 +105,8 @@ class DeviceAssignmentBloc extends Bloc<AssignmentAction, AssignmentState> {
       dispatch(DeviceUpdate(device));
     } catch (e) {
       print(e);
-      print('Device not found');
-      dispatch(const AssignmentError('Device not found'));
+      print(DeviceErrors.deviceNotFound);
+      dispatch(const AssignmentError(DeviceErrors.deviceNotFound));
     }
   }
 

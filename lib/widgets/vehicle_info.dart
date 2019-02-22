@@ -24,6 +24,10 @@ class VehicleInfo extends StatelessWidget {
             subtitle: Text(vehicle.id),
           ),
           ListTile(
+            title: const Text('Dueño'),
+            subtitle: Text(vehicle.ownerName),
+          ),
+          ListTile(
             title: const Text('Patente'),
             subtitle: Text(vehicle.domain),
           ),

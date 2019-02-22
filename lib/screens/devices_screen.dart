@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
+import 'package:kelvin_mobile/screens/errors.dart';
 import 'package:kelvin_mobile/utils/funcs.dart';
 import 'package:kelvin_mobile/widgets/loading.dart';
 import 'package:kelvin_mobile/widgets/search_scaffold.dart';
 import 'package:kelvin_mobile/widgets/text_section_list.dart';
 
 class DevicesScreen extends StatelessWidget {
-
   DevicesScreen({Key key}) : super(key: key);
 
   @override
@@ -21,7 +21,10 @@ class DevicesScreen extends StatelessWidget {
           return _loadingScreen();
         }
         if (state.hasError) {
-          throw Exception(state.errorMessage);
+          return _errorScreen(Errors.generic);
+        }
+        if (state.devices.isEmpty) {
+          return _errorScreen(Errors.noDevices);
         }
         return _resultScreen(state.devices);
       },
@@ -34,6 +37,17 @@ class DevicesScreen extends StatelessWidget {
         title: const Text('Dispositivos'),
       ),
       body: Loading(),
+    );
+  }
+
+  Widget _errorScreen(String message) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dispositivos'),
+      ),
+      body: Center(
+        child: Text(message),
+      ),
     );
   }
 

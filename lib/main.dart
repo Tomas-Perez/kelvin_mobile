@@ -5,7 +5,6 @@ import 'package:kelvin_mobile/blocs/auth_bloc.dart';
 import 'package:kelvin_mobile/blocs/connection_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
-import 'package:kelvin_mobile/mock/devices.dart';
 import 'package:kelvin_mobile/screens/home_screen.dart';
 import 'package:kelvin_mobile/screens/login_screen.dart';
 import 'package:kelvin_mobile/services/assignment_service.dart';
@@ -93,8 +92,7 @@ class MyApp extends StatelessWidget {
         (c) {
           return ServiceProvider<ScannerService>(
             child: c,
-            service:
-                MockScannerService(onScan: () => 'device/${devices[0].id}'),
+            service: QRScannerService(),
           );
         },
       ],

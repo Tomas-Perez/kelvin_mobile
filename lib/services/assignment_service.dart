@@ -61,7 +61,7 @@ class MockAssignmentService implements AssignmentService {
 
     vehicles.remove(foundVehicle);
     vehicles.add(
-      Vehicle(
+      VehicleModel(
         id: foundVehicle.id,
         ownerId: foundVehicle.ownerId,
         deviceId: foundDevice.id,
@@ -75,7 +75,7 @@ class MockAssignmentService implements AssignmentService {
 
   @override
   Future<void> unassign(AssignedPair pair, {@required String url, @required String token}) async {
-    Vehicle foundVehicle;
+    VehicleModel foundVehicle;
 
     if (pair.vehicle != null) {
       foundVehicle =
@@ -91,7 +91,7 @@ class MockAssignmentService implements AssignmentService {
 
     vehicles.remove(foundVehicle);
     vehicles.add(
-      Vehicle(
+      VehicleModel(
         id: foundVehicle.id,
         ownerId: foundVehicle.ownerId,
         deviceId: null,
