@@ -27,7 +27,7 @@ class QRScannerService implements ScannerService {
   @override
   Future<String> scan() async {
     try {
-      return BarcodeScanner.scan();
+      return await BarcodeScanner.scan();
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         throw const AccessDeniedException();

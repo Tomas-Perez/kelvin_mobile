@@ -108,6 +108,7 @@ class _SearchScaffoldState extends State<SearchScaffold> {
 
   AppBar _searchBar() {
     return AppBar(
+      iconTheme: IconThemeData(color: Theme.of(context).textTheme.title.color),
       title: TextField(
         controller: _controller,
         autofocus: true,

@@ -102,13 +102,17 @@ class HttpAssignmentService implements AssignmentService {
     @required String url,
     @required String token,
   }) async {
-    final res = await http.post('$url/assign/vehicle/${vehicle.id}', headers: {
-      HttpHeaders.authorizationHeader: 'Bearer $token',
-      HttpHeaders.contentTypeHeader: ContentType.json.toString(),
-    });
+    final res = await http.post(
+      '$url/assign/vehicle/${vehicle.id}',
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        HttpHeaders.contentTypeHeader: ContentType.json.toString(),
+      },
+      body: json.encode({'deviceId': device.id})
+    );
 
     switch (res.statusCode) {
-      case HttpStatus.noContent:
+      case HttpStatus.ok:
         return;
       case HttpStatus.conflict:
         final errorMessage = json.decode(res.body)['message'] as String;
@@ -123,7 +127,7 @@ class HttpAssignmentService implements AssignmentService {
       case HttpStatus.notFound:
         throw DeviceNotFoundException();
     }
-    throw UnknownResponseException();
+    throw UnknownResponseException(res);
   }
 
   @override
