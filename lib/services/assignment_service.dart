@@ -108,7 +108,7 @@ class HttpAssignmentService implements AssignmentService {
         HttpHeaders.authorizationHeader: 'Bearer $token',
         HttpHeaders.contentTypeHeader: ContentType.json.toString(),
       },
-      body: json.encode({'deviceId': device.id})
+      body: json.encode({'deviceId': device.id}),
     );
 
     switch (res.statusCode) {
