@@ -45,7 +45,7 @@ class DevicesBloc extends Bloc<DevicesAction, DevicesState> {
       print(e);
       dispatch(DevicesError(e.message));
     } catch (e) {
-      final message = 'Error getting all devices';
+      final message = DeviceErrors.cantGetDevices;
       print(e);
       dispatch(DevicesError(message));
     }

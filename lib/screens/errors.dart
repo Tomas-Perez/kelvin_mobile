@@ -14,6 +14,8 @@ class Errors {
 
   static const generic = 'Ha ocurrido un error';
   static const invalidCode = 'Código inválido';
+  static const accessDenied =
+      'Por favor brinde acceso a la cámara para poder escanear un código QR';
   static const notAVehicle = 'El código no pertenece a un vehículo';
   static const notADevice = 'El código no pertenece a un dispositivo';
   static const vehicleNotFound = 'El vehículo no existe';

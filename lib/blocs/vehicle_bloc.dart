@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:meta/meta.dart';
@@ -29,8 +30,8 @@ class VehicleBloc extends Bloc<VehicleAction, VehicleState> {
           vehiclesState.vehicles.firstWhere((v) => v.id == vehicleId);
       dispatch(VehicleUpdate(vehicle));
     } catch (e) {
-      print('not found');
-      dispatch(const VehicleError('Not found'));
+      print(VehicleErrors.vehicleNotFound);
+      dispatch(const VehicleError(VehicleErrors.vehicleNotFound));
     }
   }
 

@@ -112,12 +112,10 @@ class DeviceScreenState extends State<DeviceScreen> {
 
     if (unassign) {
       try {
-        _assignmentBloc.unassign();
+        await _assignmentBloc.unassign();
       } catch (e) {
         Errors.show(context, exc: e);
       }
-    } else {
-      print('no');
     }
   }
 
@@ -160,7 +158,7 @@ class DeviceScreenState extends State<DeviceScreen> {
     } on BackButtonException catch (e) {
       print(e);
     } on AccessDeniedException catch (e) {
-      Errors.show(context, exc: e, message: Errors.invalidCode);
+      Errors.show(context, exc: e, message: Errors.accessDenied);
     } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.notAVehicle);
     } on FormatException catch (e) {
@@ -199,8 +197,6 @@ class DeviceScreenState extends State<DeviceScreen> {
             } catch (e) {
               Errors.show(context, exc: e);
             }
-          } else {
-            print('no');
           }
         }
       }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:meta/meta.dart';
 
@@ -28,8 +29,8 @@ class DeviceBloc extends Bloc<DeviceAction, DeviceState> {
       final device = devicesState.devices.firstWhere((d) => d.id == deviceId);
       dispatch(DeviceUpdate(device));
     } catch (e) {
-      print('not found');
-      dispatch(const DeviceError('Not found'));
+      print(DeviceErrors.deviceNotFound);
+      dispatch(const DeviceError(DeviceErrors.deviceNotFound));
     }
   }
 

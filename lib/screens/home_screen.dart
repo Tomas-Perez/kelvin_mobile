@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
     } on BackButtonException catch (e) {
       print(e);
     } on AccessDeniedException catch (e) {
-      Errors.show(context, exc: e, message: Errors.invalidCode);
+      Errors.show(context, exc: e, message: Errors.accessDenied);
     } on UnknownTypeException catch (e) {
       Errors.show(context, exc: e, message: Errors.invalidCode);
     } on FormatException catch (e) {

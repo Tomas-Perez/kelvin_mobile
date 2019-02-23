@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/blocs/vehicles_bloc.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/errors.dart';
@@ -21,6 +22,10 @@ class VehiclesScreen extends StatelessWidget {
           return _loadingScreen();
         }
         if (state.hasError) {
+          switch (state.errorMessage) {
+            case AuthErrors.noConnection:
+              return _errorScreen(Errors.noConnection);
+          }
           return _errorScreen(Errors.generic);
         }
         if (state.vehicles.isEmpty) {

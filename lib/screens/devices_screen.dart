@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kelvin_mobile/blocs/devices_bloc.dart';
+import 'package:kelvin_mobile/blocs/errors.dart';
 import 'package:kelvin_mobile/data.dart';
 import 'package:kelvin_mobile/screens/device_screen.dart';
 import 'package:kelvin_mobile/screens/errors.dart';
@@ -21,6 +22,10 @@ class DevicesScreen extends StatelessWidget {
           return _loadingScreen();
         }
         if (state.hasError) {
+          switch (state.errorMessage) {
+            case AuthErrors.noConnection:
+              return _errorScreen(Errors.noConnection);
+          }
           return _errorScreen(Errors.generic);
         }
         if (state.devices.isEmpty) {
@@ -69,7 +74,7 @@ class DevicesScreen extends StatelessWidget {
         );
       },
       title: 'Dispositivos',
-      searchHint: 'Buscar dispositivos',
+      searchHint: 'Buscar dispositivo',
     );
   }
 

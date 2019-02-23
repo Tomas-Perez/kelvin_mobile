@@ -2,12 +2,14 @@ class DeviceErrors {
   const DeviceErrors._();
 
   static const deviceNotFound = 'DEVICE_NOT_FOUND';
+  static const cantGetDevices = 'ERROR_GETTING_DEVICES';
 }
 
 class VehicleErrors {
   const VehicleErrors._();
 
   static const vehicleNotFound = 'VEHICLE_NOT_FOUND';
+  static const cantGetVehicles = 'ERROR_GETTING_VEHICLES';
 }
 
 class AuthErrors {

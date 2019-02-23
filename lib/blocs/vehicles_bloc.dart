@@ -45,7 +45,7 @@ class VehiclesBloc extends Bloc<VehiclesAction, VehiclesState> {
       print(e);
       dispatch(VehiclesError(e.message));
     } catch (e) {
-      final message = 'Error getting all vehicles';
+      final message = VehicleErrors.cantGetVehicles;
       print(e);
       dispatch(VehiclesError(message));
     }
